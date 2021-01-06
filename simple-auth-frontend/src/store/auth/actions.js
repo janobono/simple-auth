@@ -19,8 +19,8 @@ export default {
 
         if (token && expiresAt && currentUser) {
             clearTimeout(timer);
-            const expiresIn = (expiresAt - new Date().getMilliseconds()) / 1000;
-            if (expiresIn > EXPIRES_DELTA) {
+            const expiresIn = (expiresAt - Date.now());
+            if (expiresIn / 1000 > EXPIRES_DELTA) {
                 timer = setTimeout(() => {
                     context.dispatch('logout');
                 }, expiresIn);
@@ -37,7 +37,7 @@ export default {
         console.log(payload);
 
         const fakeToken = 'fake token';
-        const fakeExpiresAt = new Date().getMilliseconds() + 2 * EXPIRES_DELTA * 1000;
+        const fakeExpiresAt = Date.now() + 2 * EXPIRES_DELTA * 1000;
         const fakeCurrentUser = {
             id: 1,
             username: 'trevor.ochmonek.dev',
