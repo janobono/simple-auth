@@ -24,6 +24,8 @@ public class RoleAndUserApiServiceIT extends BaseIntegrationTest {
 
         RoleDetailSO roleDetailSO = roleApiService.addRole(new RoleSO("view-hotels"));
         RoleDetailSO roleDetailSO1 = roleApiService.addRole(new RoleSO("manage-hotels"));
+        RoleDetailSO roleDetailSO2 = roleApiService.getRole(1L);
+        RoleDetailSO roleDetailSO3 = roleApiService.getRole(2L);
 
         roles = roleApiService.getRoles(Pageable.unpaged());
         assertThat(roles.getTotalElements()).isEqualTo(4L);
@@ -32,10 +34,10 @@ public class RoleAndUserApiServiceIT extends BaseIntegrationTest {
         userSO.setUsername("trevor.ochmonek.dev");
         userSO.setPassword("MelmacAlf+456"); //$2a$10$DiZet0o1I9E1TogKsnTosuWr.jMuvFBnlknrLIcPhOebW0nXPyeXa
         userSO.setEnabled(true);
-        userSO.getRoles().add(new RoleSO(DefaultRole.ROLE_VIEW_USERS.getRoleName()));
-        userSO.getRoles().add(new RoleSO(DefaultRole.ROLE_MANAGE_USERS.getRoleName()));
-        userSO.getRoles().add(new RoleSO("view-hotels"));
-        userSO.getRoles().add(new RoleSO("manage-hotels"));
+        userSO.getRoles().add(roleDetailSO);
+        userSO.getRoles().add(roleDetailSO1);
+        userSO.getRoles().add(roleDetailSO2);
+        userSO.getRoles().add(roleDetailSO3);
         userSO.getAttributes().put("email", "trevor.ochmonek@melmac.com");
         userSO.getAttributes().put("given_name", "Trevor");
         userSO.getAttributes().put("family_name", "Ochmonek");

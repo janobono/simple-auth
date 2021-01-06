@@ -20,6 +20,13 @@ public class RoleMapperTest {
     public EnhancedRandom enhancedRandom = TestEnhancedRandomBuilder.build();
 
     @Test
+    public void roleDetailSOToRole() {
+        RoleDetailSO roleDetailSO = enhancedRandom.nextObject(RoleDetailSO.class);
+        Role role = mapper.roleDetailSOToRole(roleDetailSO);
+        assertThat(roleDetailSO).usingRecursiveComparison().isEqualTo(role);
+    }
+
+    @Test
     public void roleToRoleDetailSO() {
         Role role = enhancedRandom.nextObject(Role.class);
         RoleDetailSO roleDetailSO = mapper.roleToRoleDetailSO(role);

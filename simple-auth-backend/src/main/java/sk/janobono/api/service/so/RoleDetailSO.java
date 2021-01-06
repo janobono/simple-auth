@@ -1,11 +1,11 @@
 package sk.janobono.api.service.so;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Schema(name = "RoleDetail")
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @ToString

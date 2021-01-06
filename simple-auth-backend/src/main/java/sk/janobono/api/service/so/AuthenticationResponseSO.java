@@ -15,5 +15,5 @@ public class AuthenticationResponseSO {
 
     private String token;
 
-    private Long expiresIn;
+    private Long expiresAt;
 }

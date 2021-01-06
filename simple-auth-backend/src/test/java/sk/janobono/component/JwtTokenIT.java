@@ -14,6 +14,7 @@ public class JwtTokenIT extends BaseIntegrationTest {
     @Test
     public void tokenTest() throws Exception {
         JwtToken.JwtUser jwtUser1 = new JwtToken.JwtUser();
+        jwtUser1.setId(1000L);
         jwtUser1.setUsername("test");
         jwtUser1.setEnabled(true);
         jwtUser1.getRoles().add("test");

@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import sk.janobono.api.service.so.RoleDetailSO;
 import sk.janobono.api.service.so.RoleSO;
 import sk.janobono.api.service.so.UserDetailSO;
 import sk.janobono.api.service.so.UserSO;
@@ -18,6 +19,7 @@ import sk.janobono.dal.domain.User;
 import sk.janobono.dal.repository.RoleRepository;
 import sk.janobono.dal.repository.UserRepository;
 import sk.janobono.dal.specification.UserSpecification;
+import sk.janobono.mapper.RoleMapper;
 import sk.janobono.mapper.UserMapper;
 
 @Service
@@ -27,9 +29,9 @@ public class UserApiService {
 
     private PasswordEncoder passwordEncoder;
 
-    private UserMapper userMapper;
+    private RoleMapper roleMapper;
 
-    private RoleRepository roleRepository;
+    private UserMapper userMapper;
 
     private UserRepository userRepository;
 
@@ -39,13 +41,13 @@ public class UserApiService {
     }
 
     @Autowired
-    public void setUserMapper(UserMapper userMapper) {
-        this.userMapper = userMapper;
+    public void setRoleMapper(RoleMapper roleMapper) {
+        this.roleMapper = roleMapper;
     }
 
     @Autowired
-    public void setRoleRepository(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
+    public void setUserMapper(UserMapper userMapper) {
+        this.userMapper = userMapper;
     }
 
     @Autowired
@@ -79,7 +81,6 @@ public class UserApiService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is already taken!");
         }
         User user = userMapper.userSOToUser(userSO);
-        resetRoles(user, userSO);
         user = userRepository.save(user);
         LOGGER.debug("addUser({})={}", userSO, user);
         return userMapper.userToUserDetailSO(user);
@@ -100,21 +101,15 @@ public class UserApiService {
             user.setPassword(passwordEncoder.encode(userSO.getPassword()));
         }
         user.setEnabled(userSO.getEnabled());
-        resetRoles(user, userSO);
+        user.getRoles().clear();
+        for (RoleDetailSO roleDetailSO : userSO.getRoles()) {
+            user.getRoles().add(roleMapper.roleDetailSOToRole(roleDetailSO));
+        }
         user.getAttributes().clear();
         user.setAttributes(userSO.getAttributes());
         user = userRepository.save(user);
         LOGGER.debug("setUser({})={}", userSO, user);
         return userMapper.userToUserDetailSO(user);
-    }
-
-    private void resetRoles(User user, UserSO userSO) {
-        user.getRoles().clear();
-        for (RoleSO roleSO : userSO.getRoles()) {
-            Role role = roleRepository.findByName(roleSO.getName())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Role not found!"));
-            user.getRoles().add(role);
-        }
     }
 
     @Transactional

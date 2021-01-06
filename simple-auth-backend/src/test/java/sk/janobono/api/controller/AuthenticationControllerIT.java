@@ -48,6 +48,7 @@ public class AuthenticationControllerIT extends BaseIntegrationTest {
     @Test
     public void currentUser() throws Exception {
         JwtToken.JwtUser userPrincipal = new JwtToken.JwtUser();
+        userPrincipal.setId(1L);
         userPrincipal.setUsername("test");
         userPrincipal.setEnabled(true);
         userPrincipal.getRoles().add("test");
@@ -58,8 +59,8 @@ public class AuthenticationControllerIT extends BaseIntegrationTest {
         );
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/current-user")).andReturn();
         assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
-        UserSO userSO = mapFromJson(mvcResult.getResponse().getContentAsString(), UserSO.class);
-        assertThat(userSO).usingRecursiveComparison().ignoringFields("password", "roles").isEqualTo(userPrincipal);
+        UserDetailSO userDetailSO = mapFromJson(mvcResult.getResponse().getContentAsString(), UserDetailSO.class);
+        assertThat(userDetailSO).usingRecursiveComparison().ignoringFields("password", "roles").isEqualTo(userPrincipal);
     }
 
     private void createTestUser() {
@@ -67,8 +68,8 @@ public class AuthenticationControllerIT extends BaseIntegrationTest {
         userSO.setUsername("test");
         userSO.setPassword("test");
         userSO.setEnabled(true);
-        userSO.getRoles().add(new RoleSO(DefaultRole.ROLE_VIEW_USERS.getRoleName()));
-        userSO.getRoles().add(new RoleSO(DefaultRole.ROLE_MANAGE_USERS.getRoleName()));
+        userSO.getRoles().add(new RoleDetailSO(1L, DefaultRole.ROLE_VIEW_USERS.getRoleName()));
+        userSO.getRoles().add(new RoleDetailSO(2L, DefaultRole.ROLE_MANAGE_USERS.getRoleName()));
         userSO.getAttributes().put("test", "test");
         userApiService.addUser(userSO);
     }

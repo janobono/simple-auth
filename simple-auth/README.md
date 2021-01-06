@@ -58,17 +58,33 @@ curl -H "Authorization: Bearer REPLACE_ME_WITH_TOKEN" http://localhost/api/curre
 
 ```json
 {
+  "id": 1,
   "username": "trevor.ochmonek.dev",
-  "email": "trevor.ochmonek@melmac.com",
-  "givenName": "Trevor",
-  "middleName": null,
-  "familyName": "Ochmonek",
-  "hotelCode": "simple-123",
+  "password": null,
+  "enabled": true,
   "roles": [
-    "manage-hotels",
-    "manage-users",
-    "view-users",
-    "view-hotels"
-  ]
+    {
+      "id": 1,
+      "name": "view-users"
+    },
+    {
+      "id": 3,
+      "name": "view-hotels"
+    },
+    {
+      "id": 2,
+      "name": "manage-users"
+    },
+    {
+      "id": 4,
+      "name": "manage-hotels"
+    }
+  ],
+  "attributes": {
+    "hotel_code": "simple-123",
+    "given_name": "Trevor",
+    "family_name": "Ochmonek",
+    "email": "trevor.ochmonek@melmac.com"
+  }
 }
 ```

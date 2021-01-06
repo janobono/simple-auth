@@ -32,6 +32,8 @@ public class JwtToken {
     @ToString
     public static class JwtUser implements UserDetails {
 
+        private Long id;
+
         private String username;
 
         private Boolean enabled;
@@ -128,6 +130,7 @@ public class JwtToken {
             JWTCreator.Builder jwtBuilder = JWT.create()
                     .withIssuer(issuer)
                     .withSubject(user.getUsername())
+                    .withClaim("id", user.getId())
                     .withClaim("enabled", user.getEnabled())
                     .withArrayClaim("authorities", user.getRoles().toArray(String[]::new))
                     .withIssuedAt(new Date(issuedAt))
@@ -153,6 +156,7 @@ public class JwtToken {
 
         JwtUser user = new JwtUser();
         user.setUsername(jwt.getSubject());
+        user.setId(jwt.getClaims().get("id").asLong());
         user.setEnabled(jwt.getClaims().get("enabled").asBoolean());
         String[] authorities = jwt.getClaims().get("authorities").asArray(String.class);
         for (String role : authorities) {

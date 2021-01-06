@@ -22,11 +22,11 @@ public class UserSO {
 
     private Boolean enabled;
 
-    private Set<RoleSO> roles;
+    private Set<RoleDetailSO> roles;
 
     private Map<String, String> attributes;
 
-    public Set<RoleSO> getRoles() {
+    public Set<RoleDetailSO> getRoles() {
         if (roles == null) {
             roles = new HashSet<>();
         }
