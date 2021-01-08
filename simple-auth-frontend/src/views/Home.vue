@@ -11,8 +11,8 @@ import useAuth from "@/hooks/Auth";
 export default {
   name: "Home",
   setup() {
-    const {isToken} = useAuth();
-    return {isLoggedIn: isToken};
+    const {isLoggedIn} = useAuth();
+    return {isLoggedIn};
   }
 }
 </script>

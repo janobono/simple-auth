@@ -1,5 +1,6 @@
 <template>
   <the-header></the-header>
+  <the-navigation-bar></the-navigation-bar>
   <article class="w3-container">
     <div class="w3-row">
       <div class="w3-third w3-container">
@@ -14,18 +15,19 @@
 </template>
 
 <script>
-import TheHeader from "@/components/layout/TheHeader";
 import TheFooter from "@/components/layout/TheFooter";
+import TheHeader from "@/components/layout/TheHeader";
+import TheNavigationBar from "@/components/layout/TheNavigationBar";
 
 import { onMounted } from 'vue';
-import { useStore } from 'vuex';
+import useAuth from "@/hooks/Auth";
 
 export default {
-  components: {TheFooter, TheHeader},
+  components: {TheFooter, TheHeader, TheNavigationBar},
   setup() {
-    const store = useStore();
+    const {initAuth} = useAuth();
     onMounted(() => {
-      store.dispatch('initAuth');
+      initAuth();
     });
     return {};
   }

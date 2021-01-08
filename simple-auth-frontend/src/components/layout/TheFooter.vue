@@ -3,13 +3,3 @@
     <p>Created with <a href="https://www.w3schools.com/w3css/default.asp">w3.css</a></p>
   </div>
 </template>
-
-<script>
-export default {
-  name: "TheFooter"
-}
-</script>
-
-<style scoped>
-
-</style>

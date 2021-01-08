@@ -6,8 +6,7 @@ export default {
     state() {
         return {
             token: null,
-            expiresAt: null,
-            currentUser: null
+            expiresAt: null
         };
     },
     getters,

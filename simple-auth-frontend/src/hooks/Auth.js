@@ -1,10 +1,44 @@
-import { computed } from 'vue';
+import axios from 'axios';
+import { computed, ref } from 'vue';
 import { useStore } from 'vuex';
+import { useRouter } from "vue-router";
+
+const client = axios.create({baseURL: '/api'});
 
 export default function useAuth() {
     const store = useStore();
-    const isToken = computed(() => {
-        return store.getters.isToken;
+    const router = useRouter();
+
+    const isLoggedIn = computed(() => {
+        return !!store.getters.token;
     });
-    return {isToken};
+
+    const initAuth = () => {
+        store.dispatch('initAuth');
+    };
+
+    const fetch = ref(false);
+    const fetchMessage = ref('');
+
+    const login = (username, password) => {
+        fetch.value = true;
+        fetchMessage.value = '';
+        client.post('/authenticate', {username, password}).then(response => {
+            store.dispatch('login', response.data);
+            router.replace('/');
+        }).catch(error => {
+            let message = error.message;
+            if (error.response.status === 400) {
+                message = 'Wrong username or password!';
+            }
+            fetch.value = false;
+            fetchMessage.value = message;
+        });
+    };
+
+    const logout = () => {
+        store.dispatch('logout');
+        router.replace('/');
+    }
+    return {isLoggedIn, initAuth, login, logout, fetch, fetchMessage};
 }
