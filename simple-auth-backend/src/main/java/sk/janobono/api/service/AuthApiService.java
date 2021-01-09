@@ -8,16 +8,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import sk.janobono.api.service.so.*;
+import sk.janobono.api.service.so.AuthenticationRequestSO;
+import sk.janobono.api.service.so.AuthenticationResponseSO;
+import sk.janobono.api.service.so.UserDetailSO;
 import sk.janobono.component.JwtToken;
-import sk.janobono.dal.domain.Role;
 import sk.janobono.dal.domain.User;
-import sk.janobono.dal.repository.RoleRepository;
 import sk.janobono.dal.repository.UserRepository;
-import sk.janobono.mapper.RoleMapper;
-
-import java.util.Optional;
-import java.util.stream.Collectors;
+import sk.janobono.mapper.UserMapper;
 
 @Service
 public class AuthApiService {
@@ -28,9 +25,7 @@ public class AuthApiService {
 
     private JwtToken jwtToken;
 
-    private RoleMapper roleMapper;
-
-    private RoleRepository roleRepository;
+    private UserMapper userMapper;
 
     private UserRepository userRepository;
 
@@ -45,18 +40,13 @@ public class AuthApiService {
     }
 
     @Autowired
-    public void setRoleMapper(RoleMapper roleMapper) {
-        this.roleMapper = roleMapper;
+    public void setUserMapper(UserMapper userMapper) {
+        this.userMapper = userMapper;
     }
 
     @Autowired
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
-    }
-
-    @Autowired
-    public void setRoleRepository(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
     }
 
     public AuthenticationResponseSO authenticate(AuthenticationRequestSO authenticationRequestSO) {
@@ -73,16 +63,9 @@ public class AuthApiService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid credentials!");
         }
 
-        JwtToken.JwtUser jwtUser = new JwtToken.JwtUser();
-        jwtUser.setId(user.getId());
-        jwtUser.setUsername(user.getUsername());
-        jwtUser.setEnabled(user.getEnabled());
-        jwtUser.setRoles(user.getRoles().stream().map(Role::getName).collect(Collectors.toSet()));
-        jwtUser.setAttributes(user.getAttributes());
-
         AuthenticationResponseSO authenticationResponse = new AuthenticationResponseSO();
         Long issuedAt = System.currentTimeMillis();
-        authenticationResponse.setToken(jwtToken.generateToken(jwtUser, issuedAt));
+        authenticationResponse.setToken(jwtToken.generateToken(user, issuedAt));
         authenticationResponse.setExpiresAt(jwtToken.expiresAt(issuedAt));
         LOGGER.info("authenticate({}) - {}", authenticationRequestSO, authenticationResponse);
         return authenticationResponse;
@@ -90,16 +73,8 @@ public class AuthApiService {
 
     public UserDetailSO getCurrentUser() {
         LOGGER.debug("getCurrentUser()");
-        JwtToken.JwtUser jwtUser = (JwtToken.JwtUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserDetailSO user = new UserDetailSO();
-        user.setId(jwtUser.getId());
-        user.setUsername(jwtUser.getUsername());
-        user.setEnabled(jwtUser.getEnabled());
-        for (String roleName : jwtUser.getRoles()) {
-            Optional<Role> optionalRole = roleRepository.findByName(roleName);
-            optionalRole.ifPresent(role -> user.getRoles().add(roleMapper.roleToRoleDetailSO(role)));
-        }
-        user.setAttributes(jwtUser.getAttributes());
-        return user;
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        LOGGER.debug("getCurrentUser() = {}", user);
+        return userMapper.userToUserDetailSO(user);
     }
 }

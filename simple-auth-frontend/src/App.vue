@@ -15,12 +15,12 @@
 </template>
 
 <script>
-import TheFooter from "@/components/layout/TheFooter";
-import TheHeader from "@/components/layout/TheHeader";
-import TheNavigationBar from "@/components/layout/TheNavigationBar";
+import TheFooter from '@/components/layout/TheFooter';
+import TheHeader from '@/components/layout/TheHeader';
+import TheNavigationBar from '@/components/layout/TheNavigationBar';
 
 import { onMounted } from 'vue';
-import useAuth from "@/hooks/Auth";
+import useAuth from '@/hooks/auth';
 
 export default {
   components: {TheFooter, TheHeader, TheNavigationBar},

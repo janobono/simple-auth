@@ -10,7 +10,7 @@
 
 <script>
 export default {
-  name: "w3-modal",
+  name: 'w3-modal',
   props: {
     show: {
       type: Boolean,

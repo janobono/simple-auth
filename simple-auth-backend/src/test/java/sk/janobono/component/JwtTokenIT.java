@@ -3,6 +3,8 @@ package sk.janobono.component;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import sk.janobono.BaseIntegrationTest;
+import sk.janobono.dal.domain.Role;
+import sk.janobono.dal.domain.User;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -12,16 +14,16 @@ public class JwtTokenIT extends BaseIntegrationTest {
     private JwtToken jwtToken;
 
     @Test
-    public void tokenTest() throws Exception {
-        JwtToken.JwtUser jwtUser1 = new JwtToken.JwtUser();
-        jwtUser1.setId(1000L);
-        jwtUser1.setUsername("test");
-        jwtUser1.setEnabled(true);
-        jwtUser1.getRoles().add("test");
-        jwtUser1.getAttributes().put("test", "test");
-        String token = jwtToken.generateToken(jwtUser1, System.currentTimeMillis());
+    public void tokenTest() {
+        User user1 = new User();
+        user1.setId(1000L);
+        user1.setUsername("test");
+        user1.setEnabled(true);
+        user1.getRoles().add(new Role(1L, "test"));
+        user1.getAttributes().put("test", "test");
+        String token = jwtToken.generateToken(user1, System.currentTimeMillis());
         System.out.println(token);
-        JwtToken.JwtUser jwtUser2 = jwtToken.parseToken(token);
-        assertThat(jwtUser1).usingRecursiveComparison().isEqualTo(jwtUser2);
+        User user2 = jwtToken.parseToken(token);
+        assertThat(user1).usingRecursiveComparison().isEqualTo(user2);
     }
 }

@@ -12,6 +12,8 @@ import sk.janobono.BaseIntegrationTest;
 import sk.janobono.api.service.UserApiService;
 import sk.janobono.api.service.so.*;
 import sk.janobono.component.JwtToken;
+import sk.janobono.dal.domain.Role;
+import sk.janobono.dal.domain.User;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -38,7 +40,7 @@ public class AuthenticationControllerIT extends BaseIntegrationTest {
         AuthenticationResponseSO authenticationResponseSO =
                 mapFromJson(mvcResult.getResponse().getContentAsString(), AuthenticationResponseSO.class);
         assertThat(authenticationResponseSO.getType()).isEqualTo("Bearer");
-        JwtToken.JwtUser tokenUser = jwtToken.parseToken(authenticationResponseSO.getToken());
+        User tokenUser = jwtToken.parseToken(authenticationResponseSO.getToken());
         assertThat(tokenUser.getUsername()).isEqualTo("test");
         assertThat(tokenUser.getEnabled()).isTrue();
         assertThat(tokenUser.getAttributes().get("test")).isEqualTo("test");
@@ -47,11 +49,11 @@ public class AuthenticationControllerIT extends BaseIntegrationTest {
 
     @Test
     public void currentUser() throws Exception {
-        JwtToken.JwtUser userPrincipal = new JwtToken.JwtUser();
+        User userPrincipal = new User();
         userPrincipal.setId(1L);
         userPrincipal.setUsername("test");
         userPrincipal.setEnabled(true);
-        userPrincipal.getRoles().add("test");
+        userPrincipal.getRoles().add(new Role(1L, "test"));
         userPrincipal.getAttributes().put("test", "test");
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(

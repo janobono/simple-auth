@@ -5,6 +5,7 @@ server:
   port: ${SIMPLE_AUTH_PORT:8080}
   servlet:
     context-path: ${SIMPLE_AUTH_CONTEXT_PATH:/api}
+    org.springframework.web.filter.CommonsRequestLoggingFilter: debug
 
 # ===============================
 # = LOGGING

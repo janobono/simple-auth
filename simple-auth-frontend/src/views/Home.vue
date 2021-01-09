@@ -6,10 +6,10 @@
 </template>
 
 <script>
-import useAuth from "@/hooks/Auth";
+import useAuth from '@/hooks/auth';
 
 export default {
-  name: "Home",
+  name: 'Home',
   setup() {
     const {isLoggedIn} = useAuth();
     return {isLoggedIn};

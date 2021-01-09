@@ -9,10 +9,10 @@
 </template>
 
 <script>
-import useAuth from "@/hooks/Auth";
+import useAuth from '@/hooks/auth';
 
 export default {
-  name: "TheNavigationBar",
+  name: 'TheNavigationBar',
   setup() {
     const {isLoggedIn, logout} = useAuth();
     return {isLoggedIn, logout};

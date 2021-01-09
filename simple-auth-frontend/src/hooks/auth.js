@@ -1,14 +1,11 @@
 import axios from 'axios';
 import { computed, ref } from 'vue';
-import { useStore } from 'vuex';
-import { useRouter } from "vue-router";
+import store from '@/store';
+import router from '@/router';
 
 const client = axios.create({baseURL: '/api'});
 
 export default function useAuth() {
-    const store = useStore();
-    const router = useRouter();
-
     const isLoggedIn = computed(() => {
         return !!store.getters.token;
     });

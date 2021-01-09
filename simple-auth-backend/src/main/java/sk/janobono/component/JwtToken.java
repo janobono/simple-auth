@@ -6,86 +6,24 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import sk.janobono.config.ConfigProperties;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import sk.janobono.config.ConfigProperties;
+import sk.janobono.dal.domain.Role;
+import sk.janobono.dal.domain.User;
 
 import java.security.KeyFactory;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.*;
+import java.util.Base64;
+import java.util.Date;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Component
 public class JwtToken {
-
-    @Getter
-    @Setter
-    @ToString
-    public static class JwtUser implements UserDetails {
-
-        private Long id;
-
-        private String username;
-
-        private Boolean enabled;
-
-        private Set<String> roles;
-
-        private Map<String, String> attributes;
-
-        public Set<String> getRoles() {
-            if (roles == null) {
-                roles = new HashSet<>();
-            }
-            return roles;
-        }
-
-        public Map<String, String> getAttributes() {
-            if (attributes == null) {
-                attributes = new HashMap<>();
-            }
-            return attributes;
-        }
-
-        @Override
-        public Collection<? extends GrantedAuthority> getAuthorities() {
-            return roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
-        }
-
-        @Override
-        public String getPassword() {
-            return null;
-        }
-
-        @Override
-        public boolean isAccountNonExpired() {
-            return true;
-        }
-
-        @Override
-        public boolean isAccountNonLocked() {
-            return true;
-        }
-
-        @Override
-        public boolean isCredentialsNonExpired() {
-            return true;
-        }
-
-        @Override
-        public boolean isEnabled() {
-            return enabled;
-        }
-    }
 
     private final Algorithm algorithm;
     private final Long expiration;
@@ -125,14 +63,18 @@ public class JwtToken {
         return issuedAt + expiration;
     }
 
-    public String generateToken(JwtUser user, Long issuedAt) {
+    public String generateToken(User user, Long issuedAt) {
         try {
             JWTCreator.Builder jwtBuilder = JWT.create()
                     .withIssuer(issuer)
                     .withSubject(user.getUsername())
                     .withClaim("id", user.getId())
                     .withClaim("enabled", user.getEnabled())
-                    .withArrayClaim("authorities", user.getRoles().toArray(String[]::new))
+                    .withArrayClaim("authorities",
+                            user.getRoles().stream()
+                                    .map(r -> r.getId() + ":" + r.getName())
+                                    .collect(Collectors.toSet()).toArray(String[]::new)
+                    )
                     .withIssuedAt(new Date(issuedAt))
                     .withExpiresAt(new Date(expiresAt(issuedAt)));
             for (Map.Entry<String, String> entry : user.getAttributes().entrySet()) {
@@ -151,16 +93,17 @@ public class JwtToken {
         return verifier.verify(token);
     }
 
-    public JwtUser parseToken(String token) throws Exception {
+    public User parseToken(String token) {
         DecodedJWT jwt = decodeToken(token);
 
-        JwtUser user = new JwtUser();
+        User user = new User();
         user.setUsername(jwt.getSubject());
         user.setId(jwt.getClaims().get("id").asLong());
         user.setEnabled(jwt.getClaims().get("enabled").asBoolean());
         String[] authorities = jwt.getClaims().get("authorities").asArray(String.class);
-        for (String role : authorities) {
-            user.getRoles().add(role);
+        for (String authority : authorities) {
+            String[] role = authority.split(":");
+            user.getRoles().add(new Role(Long.parseLong(role[0]), role[1]));
         }
         for (String claimKey : jwt.getClaims().keySet()) {
             if (claimKey.startsWith(issuer + ":")) {

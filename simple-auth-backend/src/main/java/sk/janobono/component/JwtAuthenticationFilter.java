@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import sk.janobono.dal.domain.User;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -33,18 +34,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws IOException, ServletException {
         String authorizationHeader = httpServletRequest.getHeader("Authorization");
 
-        if (!StringUtils.isEmpty(authorizationHeader) && authorizationHeader.startsWith("Bearer ")) {
+        if (StringUtils.hasLength(authorizationHeader) && authorizationHeader.startsWith("Bearer ")) {
             String token = authorizationHeader.replace("Bearer ", "");
-            JwtToken.JwtUser userPrincipal = null;
-            try {
-                userPrincipal = jwtToken.parseToken(token);
-            } catch (Exception e) {
-                LOGGER.warn("Token parse error!", e);
-            }
-            if (userPrincipal != null) {
+            User user = jwtToken.parseToken(token);
+            if (user != null) {
+                LOGGER.debug("user: {}", user);
                 SecurityContextHolder.getContext().setAuthentication(
-                        new UsernamePasswordAuthenticationToken(
-                                userPrincipal, null, userPrincipal.getAuthorities())
+                        new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities())
                 );
             }
         }
