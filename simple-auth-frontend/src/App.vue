@@ -1,9 +1,9 @@
 <template>
   <the-header></the-header>
   <the-navigation-bar></the-navigation-bar>
-  <article class="w3-container">
+  <article class="w3-container w3-margin-bottom">
     <div class="w3-row">
-      <div class="w3-third w3-container">
+      <div class="w3-container w3-third">
         <img alt="Vue logo" src="./assets/logo.png">
       </div>
       <div class="w3-container w3-twothird">

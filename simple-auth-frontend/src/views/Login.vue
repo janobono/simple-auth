@@ -1,5 +1,5 @@
 <template>
-  <section class="w3-container w3-margin-bottom">
+  <section class="w3-container">
     <div class="w3-container">
       <h2>Login</h2>
     </div>
@@ -28,7 +28,7 @@
       </div>
     </w3-modal>
 
-    <w3-modal @click="clickModal" :show="fetch">
+    <w3-modal :show="fetch">
       <base-spinner></base-spinner>
     </w3-modal>
   </section>

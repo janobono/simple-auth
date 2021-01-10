@@ -88,3 +88,8 @@ curl -H "Authorization: Bearer REPLACE_ME_WITH_TOKEN" http://localhost/api/curre
   }
 }
 ```
+
+## Login page
+[login](http://127.0.0.1/login)
+
+![login page](./login_page.png)

@@ -2,12 +2,12 @@ import { computed } from 'vue';
 import useFetch from '@/hooks/fetch';
 import store from '@/store';
 
-export default function useRoles() {
+export default function useUsers() {
 
-    const {fetch, fetchMessage, page, fetchPage} = useFetch('/api/roles', 'role/setRoles');
+    const {fetch, fetchMessage, page, fetchPage} = useFetch('/api/users', 'user/setUsers');
 
     const data = computed(() => {
-        return store.getters['role/roles'];
+        return store.getters['user/users'];
     });
 
     return {fetch, fetchMessage, fetchPage, page, data};
