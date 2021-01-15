@@ -6,7 +6,7 @@
         <groupId>sk.janobono</groupId>
         <artifactId>simple-auth</artifactId>
         <version>${revision}</version>
-        <relativePath>..</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>simple-auth-backend</artifactId>
 
