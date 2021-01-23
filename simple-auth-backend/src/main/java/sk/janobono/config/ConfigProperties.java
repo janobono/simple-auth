@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @ToString
-@ConfigurationProperties("simple-auth")
+@ConfigurationProperties("app")
 public class ConfigProperties {
 
     @NotEmpty
