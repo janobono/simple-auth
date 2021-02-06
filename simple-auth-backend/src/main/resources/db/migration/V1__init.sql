@@ -44,6 +44,9 @@ alter table simple_auth_role
 alter table simple_auth_user
     add constraint u_simple_auth_user unique (username);
 
+alter table simple_auth_user_role
+    add constraint u_simple_auth_user_role unique (user_id, role_id);
+
 alter table simple_auth_user_attribute
     add constraint u_simple_auth_user_attribute unique (user_id, key);
 
@@ -65,5 +68,7 @@ create index idx_simple_auth_user_role_2 on simple_auth_user_role (user_id);
 create index idx_simple_auth_user_attribute on simple_auth_user_attribute (user_id);
 
 -- DATA
-insert into simple_auth_role(id, name) values (nextval('sq_simple_auth_role'), 'view-users');
-insert into simple_auth_role(id, name) values (nextval('sq_simple_auth_role'), 'manage-users');
+insert into simple_auth_role(id, name)
+values (nextval('sq_simple_auth_role'), 'view-users');
+insert into simple_auth_role(id, name)
+values (nextval('sq_simple_auth_role'), 'manage-users');

@@ -22,6 +22,8 @@ import sk.janobono.dal.specification.UserSpecification;
 import sk.janobono.mapper.RoleMapper;
 import sk.janobono.mapper.UserMapper;
 
+import java.util.Comparator;
+
 @Service
 public class UserApiService {
 
@@ -57,18 +59,18 @@ public class UserApiService {
 
     public Page<UserDetailSO> getUsers(Pageable pageable) {
         LOGGER.debug("getUsers({})", pageable);
-        return userRepository.findAll(pageable).map(userMapper::userToUserDetailSO);
+        return userRepository.findAll(pageable).map(this::mapUser);
     }
 
     public Page<UserDetailSO> getUsers(String searchField, Pageable pageable) {
         LOGGER.debug("getUsers({},{})", searchField, pageable);
-        return userRepository.findAll(new UserSpecification(searchField), pageable).map(userMapper::userToUserDetailSO);
+        return userRepository.findAll(new UserSpecification(searchField), pageable).map(this::mapUser);
     }
 
     public UserDetailSO getUser(Long id) {
         LOGGER.debug("getUser({})", id);
         return userRepository.findById(id)
-                .map(userMapper::userToUserDetailSO)
+                .map(this::mapUser)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found!"));
     }
 
@@ -83,7 +85,7 @@ public class UserApiService {
         User user = userMapper.userSOToUser(userSO);
         user = userRepository.save(user);
         LOGGER.debug("addUser({})={}", userSO, user);
-        return userMapper.userToUserDetailSO(user);
+        return mapUser(user);
     }
 
     @Transactional
@@ -109,7 +111,7 @@ public class UserApiService {
         user.setAttributes(userSO.getAttributes());
         user = userRepository.save(user);
         LOGGER.debug("setUser({})={}", userSO, user);
-        return userMapper.userToUserDetailSO(user);
+        return mapUser(user);
     }
 
     @Transactional
@@ -119,5 +121,12 @@ public class UserApiService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found!");
         }
         userRepository.deleteById(id);
+    }
+
+    private UserDetailSO mapUser(User user) {
+        UserDetailSO result = userMapper.userToUserDetailSO(user);
+        result.getRoles().sort(Comparator.comparing(RoleDetailSO::getId));
+        LOGGER.debug("mapUser({})={}", user, result);
+        return result;
     }
 }

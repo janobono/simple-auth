@@ -29,14 +29,14 @@ public class UserController {
     }
 
     @GetMapping()
-    @PreAuthorize("hasAnyRole('view-users', 'manage-users')")
+    @PreAuthorize("hasAnyAuthority('view-users', 'manage-users')")
     public ResponseEntity<Page<UserDetailSO>> getUsers(Pageable pageable) {
         LOGGER.debug("getUsers({})", pageable);
         return new ResponseEntity<>(userApiService.getUsers(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/by-search-criteria")
-    @PreAuthorize("hasAnyRole('view-users', 'manage-users')")
+    @PreAuthorize("hasAnyAuthority('view-users', 'manage-users')")
     public ResponseEntity<Page<UserDetailSO>> getUsersBySearchCriteria(
             @RequestParam(value = "search-field", required = false) String searchField, Pageable pageable) {
         LOGGER.debug("getUsersBySearchCriteria({},{})", searchField, pageable);
@@ -44,28 +44,28 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('view-users', 'manage-users')")
+    @PreAuthorize("hasAnyAuthority('view-users', 'manage-users')")
     public ResponseEntity<UserDetailSO> getUser(@PathVariable("id") Long id) {
         LOGGER.debug("getUser({})", id);
         return new ResponseEntity<>(userApiService.getUser(id), HttpStatus.OK);
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('manage-users')")
+    @PreAuthorize("hasAuthority('manage-users')")
     public ResponseEntity<UserDetailSO> addUser(@Valid @RequestBody UserSO user) {
         LOGGER.debug("addUser({})", user);
         return new ResponseEntity<>(userApiService.addUser(user), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('manage-users')")
+    @PreAuthorize("hasAuthority('manage-users')")
     public ResponseEntity<UserDetailSO> setUser(@PathVariable("id") Long id, @Valid @RequestBody UserSO user) {
         LOGGER.debug("setUser({})", user);
         return new ResponseEntity<>(userApiService.setUser(id, user), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('manage-users')")
+    @PreAuthorize("hasAuthority('manage-users')")
     public void deleteUser(@PathVariable("id") Long id) {
         LOGGER.debug("deleteUser({})", id);
         userApiService.deleteUser(id);

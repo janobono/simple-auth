@@ -1,19 +1,18 @@
 package sk.janobono.api.service.so;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Schema(name = "UserDetail")
 @Getter
 @Setter
-@ToString(exclude = {"password"})
+@EqualsAndHashCode(of = "id")
+@ToString(exclude = "password")
 public class UserDetailSO {
 
     private Long id;
@@ -24,13 +23,13 @@ public class UserDetailSO {
 
     private Boolean enabled;
 
-    private Set<RoleDetailSO> roles;
+    private List<RoleDetailSO> roles;
 
     private Map<String, String> attributes;
 
-    public Set<RoleDetailSO> getRoles() {
+    public List<RoleDetailSO> getRoles() {
         if (roles == null) {
-            roles = new HashSet<>();
+            roles = new ArrayList<>();
         }
         return roles;
     }

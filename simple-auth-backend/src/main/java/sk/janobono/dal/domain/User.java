@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(of = {"id"})
-@ToString(exclude = {"password"})
+@EqualsAndHashCode(of = "id")
+@ToString(exclude = "password")
 @Entity
 @Table(name = "simple_auth_user")
 @SequenceGenerator(name = "user_generator", allocationSize = 1, sequenceName = "sq_simple_auth_user")
@@ -34,13 +34,17 @@ public class User implements UserDetails {
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinTable(name = "simple_auth_user_role",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles;
+            inverseJoinColumns = @JoinColumn(name = "role_id"),
+            uniqueConstraints = {
+                    @UniqueConstraint(columnNames = {"user_id", "role_id"})
+            }
+    )
+    private List<Role> roles;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "simple_auth_user_attribute",
             joinColumns = @JoinColumn(name = "user_id"),
             uniqueConstraints = {
@@ -50,9 +54,9 @@ public class User implements UserDetails {
     @Column(name = "value")
     private Map<String, String> attributes;
 
-    public Set<Role> getRoles() {
+    public List<Role> getRoles() {
         if (roles == null) {
-            roles = new HashSet<>();
+            roles = new ArrayList<>();
         }
         return roles;
     }
@@ -72,13 +76,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getRoles().stream().map(r -> {
-            String roleName = r.getName();
-            if (!roleName.startsWith("ROLE_")) {
-                roleName = "ROLE_" + roleName;
-            }
-            return new SimpleGrantedAuthority(roleName);
-        }).collect(Collectors.toList());
+        return getRoles().stream().map(r -> new SimpleGrantedAuthority(r.getName())).collect(Collectors.toList());
     }
 
     @Override

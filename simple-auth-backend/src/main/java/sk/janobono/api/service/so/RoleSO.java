@@ -11,6 +11,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode(of = "name")
 @ToString
 public class RoleSO {
 

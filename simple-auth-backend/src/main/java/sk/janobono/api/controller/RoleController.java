@@ -29,35 +29,35 @@ public class RoleController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('view-users', 'manage-users')")
+    @PreAuthorize("hasAnyAuthority('view-users', 'manage-users')")
     public ResponseEntity<Page<RoleDetailSO>> getRoles(Pageable pageable) {
         LOGGER.debug("getRoles({})", pageable);
         return new ResponseEntity<>(roleApiService.getRoles(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('view-users', 'manage-users')")
+    @PreAuthorize("hasAnyAuthority('view-users', 'manage-users')")
     public ResponseEntity<RoleDetailSO> getRole(@PathVariable("id") Long id) {
         LOGGER.debug("getRole({})", id);
         return new ResponseEntity<>(roleApiService.getRole(id), HttpStatus.OK);
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('manage-users')")
+    @PreAuthorize("hasAuthority('manage-users')")
     public ResponseEntity<RoleDetailSO> addRole(@Valid @RequestBody RoleSO role) {
         LOGGER.debug("addRole({})", role);
         return new ResponseEntity<>(roleApiService.addRole(role), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('manage-users')")
+    @PreAuthorize("hasAuthority('manage-users')")
     public ResponseEntity<RoleDetailSO> setRole(@PathVariable("id") Long id, @Valid @RequestBody RoleSO role) {
         LOGGER.debug("addRole({})", role);
         return new ResponseEntity<>(roleApiService.setRole(id, role), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('manage-users')")
+    @PreAuthorize("hasAuthority('manage-users')")
     public void deleteRole(@PathVariable("id") Long id) {
         LOGGER.debug("deleteRole({})", id);
         roleApiService.deleteRole(id);
