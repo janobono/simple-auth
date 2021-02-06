@@ -17,7 +17,7 @@ import sk.janobono.dal.domain.User;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AuthenticationControllerIT extends BaseIntegrationTest {
+public class AuthControllerIT extends BaseIntegrationTest {
 
     @Autowired
     private UserApiService userApiService;
