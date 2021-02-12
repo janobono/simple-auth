@@ -15,7 +15,7 @@
 
     <properties>
         <revision>0.0.1</revision>
-        <java.version>11</java.version>
+        <java.version>15</java.version>
 
         <com.auth0.version>3.12.0</com.auth0.version>
 

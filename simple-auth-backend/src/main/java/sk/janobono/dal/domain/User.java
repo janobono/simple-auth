@@ -34,7 +34,7 @@ public class User implements UserDetails {
     @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "simple_auth_user_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"),
