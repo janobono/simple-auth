@@ -2,7 +2,7 @@
 Simple Auth Application, SpringBoot backend and Vue frontend, Docker as deployment environment.
 
 ## build
-- [OpenJDK 11](https://adoptopenjdk.net/)
+- [OpenJDK 15](https://adoptopenjdk.net/)
 - [Maven](https://maven.apache.org/download.cgi)
 - [Docker](https://docs.docker.com/get-docker/)
 
