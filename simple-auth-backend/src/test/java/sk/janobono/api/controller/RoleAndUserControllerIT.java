@@ -15,6 +15,8 @@ import sk.janobono.api.service.so.RoleSO;
 import sk.janobono.api.service.so.UserDetailSO;
 import sk.janobono.api.service.so.UserSO;
 
+import java.nio.charset.StandardCharsets;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class RoleAndUserControllerIT extends BaseIntegrationTest {
@@ -74,7 +76,7 @@ public class RoleAndUserControllerIT extends BaseIntegrationTest {
         builder.param("size", Integer.toString(size));
         MvcResult mvcResult = mvc.perform(builder).andReturn();
         assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
-        return mapPagedResponse(mvcResult.getResponse().getContentAsString(), RoleDetailSO.class);
+        return mapPagedResponse(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8), RoleDetailSO.class);
     }
 
     private RoleDetailSO addRole(RoleSO roleSO) throws Exception {
@@ -82,13 +84,13 @@ public class RoleAndUserControllerIT extends BaseIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapToJson(roleSO))).andReturn();
         assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.CREATED.value());
-        return mapFromJson(mvcResult.getResponse().getContentAsString(), RoleDetailSO.class);
+        return mapFromJson(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8), RoleDetailSO.class);
     }
 
     private RoleDetailSO getRole(Long id) throws Exception {
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/roles/" + id)).andReturn();
         assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
-        return mapFromJson(mvcResult.getResponse().getContentAsString(), RoleDetailSO.class);
+        return mapFromJson(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8), RoleDetailSO.class);
     }
 
     private void deleteRole(Long id) throws Exception {
@@ -101,13 +103,13 @@ public class RoleAndUserControllerIT extends BaseIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapToJson(userSO))).andReturn();
         assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.CREATED.value());
-        return mapFromJson(mvcResult.getResponse().getContentAsString(), UserDetailSO.class);
+        return mapFromJson(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8), UserDetailSO.class);
     }
 
     private UserDetailSO getUser(Long id) throws Exception {
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/users/" + id)).andReturn();
         assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
-        return mapFromJson(mvcResult.getResponse().getContentAsString(), UserDetailSO.class);
+        return mapFromJson(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8), UserDetailSO.class);
     }
 
     private Page<UserDetailSO> getUsers(
@@ -121,7 +123,7 @@ public class RoleAndUserControllerIT extends BaseIntegrationTest {
         builder.param("size", Integer.toString(size));
         MvcResult mvcResult = mvc.perform(builder).andReturn();
         assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
-        return mapPagedResponse(mvcResult.getResponse().getContentAsString(), UserDetailSO.class);
+        return mapPagedResponse(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8), UserDetailSO.class);
     }
 
     private void deleteUser(Long id) throws Exception {

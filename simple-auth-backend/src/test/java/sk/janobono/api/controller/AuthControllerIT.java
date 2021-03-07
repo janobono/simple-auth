@@ -15,6 +15,8 @@ import sk.janobono.component.JwtToken;
 import sk.janobono.dal.domain.Role;
 import sk.janobono.dal.domain.User;
 
+import java.nio.charset.StandardCharsets;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AuthControllerIT extends BaseIntegrationTest {
@@ -38,7 +40,7 @@ public class AuthControllerIT extends BaseIntegrationTest {
         assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
 
         AuthenticationResponseSO authenticationResponseSO =
-                mapFromJson(mvcResult.getResponse().getContentAsString(), AuthenticationResponseSO.class);
+                mapFromJson(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8), AuthenticationResponseSO.class);
         assertThat(authenticationResponseSO.getType()).isEqualTo("Bearer");
         User tokenUser = jwtToken.parseToken(authenticationResponseSO.getToken());
         assertThat(tokenUser.getUsername()).isEqualTo("test");
@@ -61,7 +63,7 @@ public class AuthControllerIT extends BaseIntegrationTest {
         );
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/current-user")).andReturn();
         assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
-        UserDetailSO userDetailSO = mapFromJson(mvcResult.getResponse().getContentAsString(), UserDetailSO.class);
+        UserDetailSO userDetailSO = mapFromJson(mvcResult.getResponse().getContentAsString(StandardCharsets.UTF_8), UserDetailSO.class);
         assertThat(userDetailSO).usingRecursiveComparison().ignoringFields("password", "roles").isEqualTo(userPrincipal);
     }
 
