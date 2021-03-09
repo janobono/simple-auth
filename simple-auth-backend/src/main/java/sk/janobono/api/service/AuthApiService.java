@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sk.janobono.api.service.so.AuthenticationRequestSO;
 import sk.janobono.api.service.so.AuthenticationResponseSO;
-import sk.janobono.api.service.so.UserDetailSO;
+import sk.janobono.api.service.so.UserSO;
 import sk.janobono.component.JwtToken;
 import sk.janobono.dal.domain.User;
 import sk.janobono.dal.repository.UserRepository;
@@ -53,14 +53,14 @@ public class AuthApiService {
         LOGGER.debug("authenticate({})", authenticationRequestSO);
 
         User user = userRepository.findByUsername(authenticationRequestSO.getUsername().toLowerCase())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found!"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found."));
 
         if (!user.getEnabled()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User disabled!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User disabled.");
         }
 
         if (!passwordEncoder.matches(authenticationRequestSO.getPassword(), user.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid credentials!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid credentials.");
         }
 
         AuthenticationResponseSO authenticationResponse = new AuthenticationResponseSO();
@@ -71,10 +71,11 @@ public class AuthApiService {
         return authenticationResponse;
     }
 
-    public UserDetailSO getCurrentUser() {
+    public UserSO getCurrentUser() {
         LOGGER.debug("getCurrentUser()");
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        LOGGER.debug("getCurrentUser() = {}", user);
-        return userMapper.userToUserDetailSO(user);
+        UserSO result = userMapper.userToUserSO(user);
+        LOGGER.debug("getCurrentUser()={}", result);
+        return result;
     }
 }

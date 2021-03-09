@@ -10,8 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sk.janobono.api.service.UserApiService;
-import sk.janobono.api.service.so.UserDetailSO;
+import sk.janobono.api.service.so.UserCreateSO;
 import sk.janobono.api.service.so.UserSO;
+import sk.janobono.api.service.so.UserUpdateSO;
 
 import javax.validation.Valid;
 
@@ -30,14 +31,14 @@ public class UserController {
 
     @GetMapping()
     @PreAuthorize("hasAnyAuthority('view-users', 'manage-users')")
-    public ResponseEntity<Page<UserDetailSO>> getUsers(Pageable pageable) {
+    public ResponseEntity<Page<UserSO>> getUsers(Pageable pageable) {
         LOGGER.debug("getUsers({})", pageable);
         return new ResponseEntity<>(userApiService.getUsers(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/by-search-criteria")
     @PreAuthorize("hasAnyAuthority('view-users', 'manage-users')")
-    public ResponseEntity<Page<UserDetailSO>> getUsersBySearchCriteria(
+    public ResponseEntity<Page<UserSO>> getUsersBySearchCriteria(
             @RequestParam(value = "search-field", required = false) String searchField, Pageable pageable) {
         LOGGER.debug("getUsersBySearchCriteria({},{})", searchField, pageable);
         return new ResponseEntity<>(userApiService.getUsers(searchField, pageable), HttpStatus.OK);
@@ -45,23 +46,23 @@ public class UserController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('view-users', 'manage-users')")
-    public ResponseEntity<UserDetailSO> getUser(@PathVariable("id") Long id) {
+    public ResponseEntity<UserSO> getUser(@PathVariable("id") Long id) {
         LOGGER.debug("getUser({})", id);
         return new ResponseEntity<>(userApiService.getUser(id), HttpStatus.OK);
     }
 
     @PostMapping
     @PreAuthorize("hasAuthority('manage-users')")
-    public ResponseEntity<UserDetailSO> addUser(@Valid @RequestBody UserSO user) {
-        LOGGER.debug("addUser({})", user);
-        return new ResponseEntity<>(userApiService.addUser(user), HttpStatus.CREATED);
+    public ResponseEntity<UserSO> addUser(@Valid @RequestBody UserCreateSO userCreateSO) {
+        LOGGER.debug("addUser({})", userCreateSO);
+        return new ResponseEntity<>(userApiService.addUser(userCreateSO), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('manage-users')")
-    public ResponseEntity<UserDetailSO> setUser(@PathVariable("id") Long id, @Valid @RequestBody UserSO user) {
-        LOGGER.debug("setUser({})", user);
-        return new ResponseEntity<>(userApiService.setUser(id, user), HttpStatus.OK);
+    public ResponseEntity<UserSO> setUser(@PathVariable("id") Long id, @Valid @RequestBody UserUpdateSO userUpdateSO) {
+        LOGGER.debug("setUser({})", userUpdateSO);
+        return new ResponseEntity<>(userApiService.setUser(id, userUpdateSO), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

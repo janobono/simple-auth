@@ -11,16 +11,16 @@ import javax.persistence.*;
 @EqualsAndHashCode(of = "id")
 @ToString
 @Entity
-@Table(name = "simple_auth_role")
-@SequenceGenerator(name = "role_generator", allocationSize = 1, sequenceName = "sq_simple_auth_role")
-public class Role {
+@Table(name = "simple_auth_authority")
+@SequenceGenerator(name = "authority_generator", allocationSize = 1, sequenceName = "sq_simple_auth_authority")
+public class Authority {
 
     @Id
-    @Column(name = "id", updatable = false, nullable = false)
-    @GeneratedValue(generator = "role_generator")
+    @Column(name = "id")
+    @GeneratedValue(generator = "authority_generator")
     private Long id;
 
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "name")
     private String name;
 
     @PrePersist

@@ -8,7 +8,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.stereotype.Component;
 import sk.janobono.config.ConfigProperties;
-import sk.janobono.dal.domain.Role;
+import sk.janobono.dal.domain.Authority;
 import sk.janobono.dal.domain.User;
 
 import java.security.KeyFactory;
@@ -71,7 +71,7 @@ public class JwtToken {
                     .withClaim("id", user.getId())
                     .withClaim("enabled", user.getEnabled())
                     .withArrayClaim("authorities",
-                            user.getRoles().stream()
+                            user.getAuthorities().stream()
                                     .map(r -> r.getId() + ":" + r.getName())
                                     .collect(Collectors.toSet()).toArray(String[]::new)
                     )
@@ -103,7 +103,7 @@ public class JwtToken {
         String[] authorities = jwt.getClaims().get("authorities").asArray(String.class);
         for (String authority : authorities) {
             String[] role = authority.split(":");
-            user.getRoles().add(new Role(Long.parseLong(role[0]), role[1]));
+            user.getAuthorities().add(new Authority(Long.parseLong(role[0]), role[1]));
         }
         for (String claimKey : jwt.getClaims().keySet()) {
             if (claimKey.startsWith(issuer + ":")) {

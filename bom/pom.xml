@@ -27,7 +27,7 @@
         <org.testcontainers.version>1.15.1</org.testcontainers.version>
 
         <frontend-maven-version>1.11.0</frontend-maven-version>
-        <node-version>v14.15.4</node-version>
+        <node-version>v14.16.0</node-version>
 
         <dockerfile-maven-version>1.4.13</dockerfile-maven-version>
         <flattern-maven-version>1.2.5</flattern-maven-version>

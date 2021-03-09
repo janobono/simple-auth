@@ -5,13 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import sk.janobono.TestEnhancedRandomBuilder;
-import sk.janobono.api.service.so.UserDetailSO;
 import sk.janobono.api.service.so.UserSO;
+import sk.janobono.dal.domain.Authority;
 import sk.janobono.dal.domain.User;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = {RoleMapperImpl.class, UserMapperImpl.class})
+@SpringBootTest(classes = {AuthorityMapperImpl.class, UserMapperImpl.class})
 public class UserMapperTest {
 
     @Autowired
@@ -20,23 +20,14 @@ public class UserMapperTest {
     public EnhancedRandom enhancedRandom = TestEnhancedRandomBuilder.build();
 
     @Test
-    public void userToUserDetailSO() {
-        User user = enhancedRandom.nextObject(User.class);
-        UserDetailSO userDetailSO = mapper.userToUserDetailSO(user);
-        assertThat(user).usingRecursiveComparison().ignoringFields("roles").isEqualTo(userDetailSO);
-    }
-
-    @Test
     public void userToUserSO() {
-        User user = enhancedRandom.nextObject(User.class);
-        UserSO userSO = mapper.userToUserSO(user);
-        assertThat(user).usingRecursiveComparison().ignoringFields("id", "roles").isEqualTo(userSO);
-    }
-
-    @Test
-    public void userSOToUser() {
-        UserSO userSO = enhancedRandom.nextObject(UserSO.class);
-        User user = mapper.userSOToUser(userSO);
-        assertThat(userSO).usingRecursiveComparison().ignoringFields("roles").isEqualTo(user);
+        User toMap = enhancedRandom.nextObject(User.class);
+        UserSO mapped = mapper.userToUserSO(toMap);
+        assertThat(toMap).usingRecursiveComparison().ignoringFields("roles").isEqualTo(mapped);
+        for (Authority authority : toMap.getAuthorities()) {
+            assertThat(authority).usingRecursiveComparison().isEqualTo(
+                    mapped.getAuthorities().stream().filter(a -> a.getId().equals(authority.getId())).findFirst().get()
+            );
+        }
     }
 }

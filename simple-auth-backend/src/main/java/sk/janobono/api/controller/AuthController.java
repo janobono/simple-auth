@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import sk.janobono.api.service.AuthApiService;
 import sk.janobono.api.service.so.AuthenticationRequestSO;
 import sk.janobono.api.service.so.AuthenticationResponseSO;
-import sk.janobono.api.service.so.UserDetailSO;
+import sk.janobono.api.service.so.UserSO;
 
 import javax.validation.Valid;
 
@@ -33,7 +33,7 @@ public class AuthController {
     }
 
     @GetMapping(path = "/current-user")
-    public ResponseEntity<UserDetailSO> currentUser() {
+    public ResponseEntity<UserSO> currentUser() {
         LOGGER.debug("currentUser()");
         return new ResponseEntity<>(authApiService.getCurrentUser(), HttpStatus.OK);
     }

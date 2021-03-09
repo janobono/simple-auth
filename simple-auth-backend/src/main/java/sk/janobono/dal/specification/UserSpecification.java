@@ -1,10 +1,10 @@
 package sk.janobono.dal.specification;
 
-import sk.janobono.dal.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.util.StringUtils;
+import sk.janobono.dal.domain.User;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -25,13 +25,13 @@ public class UserSpecification implements Specification<User> {
 
     public Predicate toPredicate(Root<User> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
         criteriaQuery.distinct(true);
-        if (StringUtils.isEmpty(searchField)) {
+        if (!StringUtils.hasLength(searchField)) {
             LOGGER.debug("Empty criteria.");
             return criteriaQuery.getRestriction();
         }
 
         List<Predicate> predicates = new ArrayList<>();
-        if (!StringUtils.isEmpty(searchField)) {
+        if (StringUtils.hasLength(searchField)) {
             predicates.add(searchFieldToPredicate(searchField, root, criteriaBuilder));
         }
 

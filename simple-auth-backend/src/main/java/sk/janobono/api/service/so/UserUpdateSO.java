@@ -6,24 +6,26 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Schema(name = "User")
+@Schema(name = "UserCreate")
 @Getter
 @Setter
-@EqualsAndHashCode(of = "id")
 @ToString(exclude = "password")
-public class UserSO {
+public class UserUpdateSO {
 
-    private Long id;
-
+    @NotEmpty
     private String username;
 
+    @NotEmpty
     private String password;
 
+    @NotNull
     private Boolean enabled;
 
     private List<AuthoritySO> authorities;

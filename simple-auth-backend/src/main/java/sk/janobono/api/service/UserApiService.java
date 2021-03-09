@@ -10,19 +10,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-import sk.janobono.api.service.so.RoleDetailSO;
-import sk.janobono.api.service.so.RoleSO;
-import sk.janobono.api.service.so.UserDetailSO;
+import sk.janobono.api.service.so.UserCreateSO;
 import sk.janobono.api.service.so.UserSO;
-import sk.janobono.dal.domain.Role;
+import sk.janobono.api.service.so.UserUpdateSO;
+import sk.janobono.dal.domain.Authority;
 import sk.janobono.dal.domain.User;
-import sk.janobono.dal.repository.RoleRepository;
 import sk.janobono.dal.repository.UserRepository;
 import sk.janobono.dal.specification.UserSpecification;
-import sk.janobono.mapper.RoleMapper;
 import sk.janobono.mapper.UserMapper;
 
-import java.util.Comparator;
+import java.util.stream.Collectors;
 
 @Service
 public class UserApiService {
@@ -31,8 +28,6 @@ public class UserApiService {
 
     private PasswordEncoder passwordEncoder;
 
-    private RoleMapper roleMapper;
-
     private UserMapper userMapper;
 
     private UserRepository userRepository;
@@ -40,11 +35,6 @@ public class UserApiService {
     @Autowired
     public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
-    }
-
-    @Autowired
-    public void setRoleMapper(RoleMapper roleMapper) {
-        this.roleMapper = roleMapper;
     }
 
     @Autowired
@@ -57,76 +47,83 @@ public class UserApiService {
         this.userRepository = userRepository;
     }
 
-    public Page<UserDetailSO> getUsers(Pageable pageable) {
+    public Page<UserSO> getUsers(Pageable pageable) {
         LOGGER.debug("getUsers({})", pageable);
-        return userRepository.findAll(pageable).map(this::mapUser);
+        Page<UserSO> result = userRepository.findAll(pageable).map(userMapper::userToUserSO);
+        LOGGER.debug("getUsers({})={}", pageable, result);
+        return result;
     }
 
-    public Page<UserDetailSO> getUsers(String searchField, Pageable pageable) {
+    public Page<UserSO> getUsers(String searchField, Pageable pageable) {
         LOGGER.debug("getUsers({},{})", searchField, pageable);
-        return userRepository.findAll(new UserSpecification(searchField), pageable).map(this::mapUser);
+        Page<UserSO> result = userRepository.findAll(new UserSpecification(searchField), pageable).map(userMapper::userToUserSO);
+        LOGGER.debug("getUsers({},{})={}", searchField, pageable, result);
+        return result;
     }
 
-    public UserDetailSO getUser(Long id) {
+    public UserSO getUser(Long id) {
         LOGGER.debug("getUser({})", id);
-        return userRepository.findById(id)
-                .map(this::mapUser)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found!"));
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found.")
+        );
+        UserSO result = userMapper.userToUserSO(user);
+        LOGGER.debug("getUser({})={}", id, result);
+        return result;
     }
 
     @Transactional
-    public UserDetailSO addUser(UserSO userSO) {
-        LOGGER.debug("addUser({})", userSO);
-        userSO.setUsername(userSO.getUsername().toLowerCase());
-        userSO.setPassword(passwordEncoder.encode(userSO.getPassword()));
-        if (userRepository.existsByUsername(userSO.getUsername())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is already taken!");
+    public UserSO addUser(UserCreateSO userCreateSO) {
+        LOGGER.debug("addUser({})", userCreateSO);
+        if (userRepository.existsByUsername(userCreateSO.getUsername().toLowerCase())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is already taken.");
         }
-        User user = userMapper.userSOToUser(userSO);
+        User user = new User();
+        user.setUsername(userCreateSO.getUsername());
+        user.setPassword(passwordEncoder.encode(userCreateSO.getPassword()));
+        user.setEnabled(userCreateSO.getEnabled());
+        user.getAuthorities().addAll(
+                userCreateSO.getAuthorities().stream()
+                        .map(a -> new Authority(a.getId(), a.getName())).collect(Collectors.toList())
+        );
+        user.getAttributes().putAll(userCreateSO.getAttributes());
         user = userRepository.save(user);
-        LOGGER.debug("addUser({})={}", userSO, user);
-        return mapUser(user);
+        UserSO result = userMapper.userToUserSO(user);
+        LOGGER.debug("addUser({})={}", userCreateSO, result);
+        return result;
     }
 
     @Transactional
-    public UserDetailSO setUser(Long id, UserSO userSO) {
-        LOGGER.debug("setUser({})", userSO);
+    public UserSO setUser(Long id, UserUpdateSO userUpdateSO) {
+        LOGGER.debug("setUser({},{})", id, userUpdateSO);
+        if (userRepository.existsByUsernameAndIdNot(userUpdateSO.getUsername().toLowerCase(), id)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is already taken.");
+        }
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found!"));
-
-        userSO.setUsername(userSO.getUsername().toLowerCase());
-        if (userRepository.existsByUsernameAndIdNot(userSO.getUsername(), id)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is already taken!");
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found."));
+        user.setUsername(userUpdateSO.getUsername());
+        if (!passwordEncoder.matches(userUpdateSO.getPassword(), user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(userUpdateSO.getPassword()));
         }
-        user.setUsername(userSO.getUsername());
-        if (!passwordEncoder.matches(userSO.getPassword(), user.getPassword())) {
-            user.setPassword(passwordEncoder.encode(userSO.getPassword()));
-        }
-        user.setEnabled(userSO.getEnabled());
-        user.getRoles().clear();
-        for (RoleDetailSO roleDetailSO : userSO.getRoles()) {
-            user.getRoles().add(roleMapper.roleDetailSOToRole(roleDetailSO));
-        }
+        user.setEnabled(userUpdateSO.getEnabled());
+        user.getAuthorities().clear();
+        user.getAuthorities().addAll(
+                userUpdateSO.getAuthorities().stream()
+                        .map(a -> new Authority(a.getId(), a.getName())).collect(Collectors.toList())
+        );
         user.getAttributes().clear();
-        user.setAttributes(userSO.getAttributes());
+        user.setAttributes(userUpdateSO.getAttributes());
         user = userRepository.save(user);
-        LOGGER.debug("setUser({})={}", userSO, user);
-        return mapUser(user);
+        UserSO result = userMapper.userToUserSO(user);
+        LOGGER.debug("setUser({},{})={}", id, userUpdateSO, result);
+        return result;
     }
 
     @Transactional
     public void deleteUser(Long id) {
         LOGGER.debug("deleteUser({})", id);
         if (!userRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found.");
         }
         userRepository.deleteById(id);
-    }
-
-    private UserDetailSO mapUser(User user) {
-        UserDetailSO result = userMapper.userToUserDetailSO(user);
-        result.getRoles().sort(Comparator.comparing(RoleDetailSO::getId));
-        LOGGER.debug("mapUser({})={}", user, result);
-        return result;
     }
 }

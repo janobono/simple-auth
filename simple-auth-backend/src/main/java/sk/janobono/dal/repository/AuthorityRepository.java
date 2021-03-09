@@ -1,13 +1,13 @@
 package sk.janobono.dal.repository;
 
-import sk.janobono.dal.domain.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
+import sk.janobono.dal.domain.Authority;
 
 import java.util.Optional;
 
-public interface RoleRepository extends JpaRepository<Role, Long> {
+public interface AuthorityRepository extends JpaRepository<Authority, Long> {
 
-    Optional<Role> findByName(String name);
+    Optional<Authority> findByName(String name);
 
     boolean existsByName(String name);
 }
