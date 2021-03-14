@@ -102,8 +102,8 @@ public class JwtToken {
         user.setEnabled(jwt.getClaims().get("enabled").asBoolean());
         String[] authorities = jwt.getClaims().get("authorities").asArray(String.class);
         for (String authority : authorities) {
-            String[] role = authority.split(":");
-            user.getAuthorities().add(new Authority(Long.parseLong(role[0]), role[1]));
+            String[] strings = authority.split(":");
+            user.getAuthorities().add(new Authority(Long.parseLong(strings[0]), strings[1]));
         }
         for (String claimKey : jwt.getClaims().keySet()) {
             if (claimKey.startsWith(issuer + ":")) {

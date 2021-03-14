@@ -8,6 +8,7 @@ import lombok.ToString;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,9 +21,11 @@ import java.util.Map;
 public class UserUpdateSO {
 
     @NotEmpty
+    @Size(max = 255)
     private String username;
 
     @NotEmpty
+    @Size(max = 255)
     private String password;
 
     @NotNull

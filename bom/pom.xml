@@ -23,6 +23,8 @@
 
         <org.springdoc.version>1.5.2</org.springdoc.version>
 
+        <openapi-generator-maven-version>5.0.0</openapi-generator-maven-version>
+
         <io.github.benas.version>3.9.0</io.github.benas.version>
         <org.testcontainers.version>1.15.1</org.testcontainers.version>
 
@@ -143,6 +145,11 @@
                             </goals>
                         </execution>
                     </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.openapitools</groupId>
+                    <artifactId>openapi-generator-maven-plugin</artifactId>
+                    <version>${openapi-generator-maven-version}</version>
                 </plugin>
                 <plugin>
                     <groupId>com.github.eirslett</groupId>

@@ -1,4 +1,4 @@
-# simple-auth docker-compose
+# simple-auth
 
 Run simple auth locally with docker-compose.
 
@@ -62,18 +62,18 @@ curl -H "Authorization: Bearer REPLACE_ME_WITH_TOKEN" http://localhost/api/curre
   "username": "trevor.ochmonek.dev",
   "password": null,
   "enabled": true,
-  "roles": [
+  "authorities": [
     {
       "id": 1,
       "name": "view-users"
     },
     {
-      "id": 3,
-      "name": "view-hotels"
-    },
-    {
       "id": 2,
       "name": "manage-users"
+    },
+    {
+      "id": 3,
+      "name": "view-hotels"
     },
     {
       "id": 4,
@@ -88,8 +88,3 @@ curl -H "Authorization: Bearer REPLACE_ME_WITH_TOKEN" http://localhost/api/curre
   }
 }
 ```
-
-## Login page
-[login](http://127.0.0.1/login)
-
-![login page](./login_page.png)
