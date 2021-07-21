@@ -1,3 +1,0 @@
-# bom
-
-Bill Of Materials

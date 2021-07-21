@@ -5,11 +5,20 @@
     <parent>
         <groupId>sk.janobono</groupId>
         <artifactId>simple-auth</artifactId>
-        <version>${revision}</version>
+        <version>0.1.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>simple-auth-frontend</artifactId>
     <packaging>pom</packaging>
+
+    <dependencies>
+        <!-- For openapi generator -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>simple-auth-backend</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
@@ -42,11 +51,11 @@
                         </goals>
                         <configuration>
                             <inputSpec>${project.basedir}/../simple-auth-backend/target/api-docs.yml</inputSpec>
-                            <generatorName>typescript-angular</generatorName>
-                            <output>${project.basedir}/openapi/simple-auth</output>
+                            <generatorName>typescript-fetch</generatorName>
+                            <output>${project.basedir}/openapi/simple-auth-backend</output>
                             <typeMappings>set=Array</typeMappings>
                             <configOptions>
-                                <ngVersion>9.0.0</ngVersion>
+                                <ngVersion>11.0.0</ngVersion>
                                 <fileNaming>kebab-case</fileNaming>
                             </configOptions>
                         </configuration>
@@ -57,20 +66,10 @@
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+            </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>docker</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.spotify</groupId>
-                        <artifactId>dockerfile-maven-plugin</artifactId>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>
