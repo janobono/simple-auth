@@ -13,15 +13,9 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserSpecification implements Specification<User> {
+public record UserSpecification(String searchField) implements Specification<User> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserSpecification.class);
-
-    private final String searchField;
-
-    public UserSpecification(String searchField) {
-        this.searchField = searchField;
-    }
 
     public Predicate toPredicate(Root<User> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
         criteriaQuery.distinct(true);
@@ -31,10 +25,7 @@ public class UserSpecification implements Specification<User> {
         }
 
         List<Predicate> predicates = new ArrayList<>();
-        if (StringUtils.hasLength(searchField)) {
-            predicates.add(searchFieldToPredicate(searchField, root, criteriaBuilder));
-        }
-
+        predicates.add(searchFieldToPredicate(searchField, root, criteriaBuilder));
         return criteriaQuery.where(criteriaBuilder.and(predicates.toArray(Predicate[]::new))).getRestriction();
     }
 

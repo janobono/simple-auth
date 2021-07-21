@@ -31,10 +31,10 @@ public class JwtToken {
 
     public JwtToken(ConfigProperties configProperties) {
         this.algorithm = Algorithm.RSA256(
-                getPublicKey(configProperties.getJwtPublicKey()), getPrivateKey(configProperties.getJwtPrivateKey())
+                getPublicKey(configProperties.jwtPublicKey()), getPrivateKey(configProperties.jwtPrivateKey())
         );
-        this.expiration = TimeUnit.SECONDS.toMillis(configProperties.getJwtExpiration());
-        this.issuer = configProperties.getIssuer();
+        this.expiration = TimeUnit.SECONDS.toMillis(configProperties.jwtExpiration());
+        this.issuer = configProperties.issuer();
     }
 
     private RSAPublicKey getPublicKey(String base64PublicKey) {

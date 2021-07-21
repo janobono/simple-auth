@@ -12,9 +12,9 @@ import sk.janobono.api.service.so.AuthenticationRequestSO;
 import sk.janobono.api.service.so.AuthenticationResponseSO;
 import sk.janobono.api.service.so.UserSO;
 import sk.janobono.component.JwtToken;
+import sk.janobono.component.UserComponent;
 import sk.janobono.dal.domain.User;
 import sk.janobono.dal.repository.UserRepository;
-import sk.janobono.mapper.UserMapper;
 
 @Service
 public class AuthApiService {
@@ -25,7 +25,7 @@ public class AuthApiService {
 
     private JwtToken jwtToken;
 
-    private UserMapper userMapper;
+    private UserComponent userComponent;
 
     private UserRepository userRepository;
 
@@ -40,8 +40,8 @@ public class AuthApiService {
     }
 
     @Autowired
-    public void setUserMapper(UserMapper userMapper) {
-        this.userMapper = userMapper;
+    public void setUserComponent(UserComponent userComponent) {
+        this.userComponent = userComponent;
     }
 
     @Autowired
@@ -52,21 +52,23 @@ public class AuthApiService {
     public AuthenticationResponseSO authenticate(AuthenticationRequestSO authenticationRequestSO) {
         LOGGER.debug("authenticate({})", authenticationRequestSO);
 
-        User user = userRepository.findByUsername(authenticationRequestSO.getUsername().toLowerCase())
+        User user = userRepository.findByUsername(authenticationRequestSO.username().toLowerCase())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found."));
 
         if (!user.getEnabled()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User disabled.");
         }
 
-        if (!passwordEncoder.matches(authenticationRequestSO.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(authenticationRequestSO.password(), user.getPassword())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid credentials.");
         }
 
-        AuthenticationResponseSO authenticationResponse = new AuthenticationResponseSO();
         Long issuedAt = System.currentTimeMillis();
-        authenticationResponse.setToken(jwtToken.generateToken(user, issuedAt));
-        authenticationResponse.setExpiresAt(jwtToken.expiresAt(issuedAt));
+        AuthenticationResponseSO authenticationResponse = new AuthenticationResponseSO(
+                "Bearer",
+                jwtToken.generateToken(user, issuedAt),
+                jwtToken.expiresAt(issuedAt)
+        );
         LOGGER.info("authenticate({}) - {}", authenticationRequestSO, authenticationResponse);
         return authenticationResponse;
     }
@@ -74,7 +76,7 @@ public class AuthApiService {
     public UserSO getCurrentUser() {
         LOGGER.debug("getCurrentUser()");
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserSO result = userMapper.userToUserSO(user);
+        UserSO result = userComponent.toUserSO(user);
         LOGGER.debug("getCurrentUser()={}", result);
         return result;
     }

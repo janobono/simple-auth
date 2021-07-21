@@ -1,28 +1,19 @@
 package sk.janobono.config;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConstructorBinding;
+import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-@Getter
-@Setter
-@ToString
 @ConfigurationProperties("app")
-public class ConfigProperties {
-
-    @NotEmpty
-    private String issuer;
-
-    @NotEmpty
-    private String jwtPrivateKey;
-
-    @NotEmpty
-    private String jwtPublicKey;
-
-    @NotNull
-    private Integer jwtExpiration;
+@ConstructorBinding
+@Validated
+public record ConfigProperties(
+        @NotEmpty String issuer,
+        @NotEmpty String jwtPrivateKey,
+        @NotEmpty String jwtPublicKey,
+        @NotNull Integer jwtExpiration
+) {
 }

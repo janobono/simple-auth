@@ -1,18 +1,25 @@
 package sk.janobono.api.service.so;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+
+import java.util.Objects;
 
 @Schema(name = "Authority")
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-@EqualsAndHashCode(of = "id")
-@ToString
-public class AuthoritySO {
+public record AuthoritySO(
+        Long id,
+        String name
+) {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AuthoritySO that = (AuthoritySO) o;
+        return Objects.equals(id, that.id);
+    }
 
-    private Long id;
-
-    private String name;
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
 }
+

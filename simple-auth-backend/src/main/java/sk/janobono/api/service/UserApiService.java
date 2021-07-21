@@ -9,15 +9,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 import sk.janobono.api.service.so.UserCreateSO;
 import sk.janobono.api.service.so.UserSO;
 import sk.janobono.api.service.so.UserUpdateSO;
+import sk.janobono.component.UserComponent;
 import sk.janobono.dal.domain.Authority;
 import sk.janobono.dal.domain.User;
 import sk.janobono.dal.repository.UserRepository;
 import sk.janobono.dal.specification.UserSpecification;
-import sk.janobono.mapper.UserMapper;
 
 import java.util.stream.Collectors;
 
@@ -28,7 +29,7 @@ public class UserApiService {
 
     private PasswordEncoder passwordEncoder;
 
-    private UserMapper userMapper;
+    private UserComponent userComponent;
 
     private UserRepository userRepository;
 
@@ -38,8 +39,8 @@ public class UserApiService {
     }
 
     @Autowired
-    public void setUserMapper(UserMapper userMapper) {
-        this.userMapper = userMapper;
+    public void setUserComponent(UserComponent userComponent) {
+        this.userComponent = userComponent;
     }
 
     @Autowired
@@ -49,14 +50,14 @@ public class UserApiService {
 
     public Page<UserSO> getUsers(Pageable pageable) {
         LOGGER.debug("getUsers({})", pageable);
-        Page<UserSO> result = userRepository.findAll(pageable).map(userMapper::userToUserSO);
+        Page<UserSO> result = userRepository.findAll(pageable).map(userComponent::toUserSO);
         LOGGER.debug("getUsers({})={}", pageable, result);
         return result;
     }
 
     public Page<UserSO> getUsers(String searchField, Pageable pageable) {
         LOGGER.debug("getUsers({},{})", searchField, pageable);
-        Page<UserSO> result = userRepository.findAll(new UserSpecification(searchField), pageable).map(userMapper::userToUserSO);
+        Page<UserSO> result = userRepository.findAll(new UserSpecification(searchField), pageable).map(userComponent::toUserSO);
         LOGGER.debug("getUsers({},{})={}", searchField, pageable, result);
         return result;
     }
@@ -66,7 +67,7 @@ public class UserApiService {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found.")
         );
-        UserSO result = userMapper.userToUserSO(user);
+        UserSO result = userComponent.toUserSO(user);
         LOGGER.debug("getUser({})={}", id, result);
         return result;
     }
@@ -74,20 +75,20 @@ public class UserApiService {
     @Transactional
     public UserSO addUser(UserCreateSO userCreateSO) {
         LOGGER.debug("addUser({})", userCreateSO);
-        if (userRepository.existsByUsername(userCreateSO.getUsername().toLowerCase())) {
+        if (userRepository.existsByUsername(userCreateSO.username().toLowerCase())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is already taken.");
         }
         User user = new User();
-        user.setUsername(userCreateSO.getUsername());
-        user.setPassword(passwordEncoder.encode(userCreateSO.getPassword()));
-        user.setEnabled(userCreateSO.getEnabled());
+        user.setUsername(userCreateSO.username());
+        user.setPassword(passwordEncoder.encode(userCreateSO.password()));
+        user.setEnabled(userCreateSO.enabled());
         user.getAuthorities().addAll(
-                userCreateSO.getAuthorities().stream()
-                        .map(a -> new Authority(a.getId(), a.getName())).collect(Collectors.toList())
+                userCreateSO.authorities().stream()
+                        .map(a -> new Authority(a.id(), a.name())).collect(Collectors.toList())
         );
-        user.getAttributes().putAll(userCreateSO.getAttributes());
+        user.getAttributes().putAll(userCreateSO.attributes());
         user = userRepository.save(user);
-        UserSO result = userMapper.userToUserSO(user);
+        UserSO result = userComponent.toUserSO(user);
         LOGGER.debug("addUser({})={}", userCreateSO, result);
         return result;
     }
@@ -95,25 +96,25 @@ public class UserApiService {
     @Transactional
     public UserSO setUser(Long id, UserUpdateSO userUpdateSO) {
         LOGGER.debug("setUser({},{})", id, userUpdateSO);
-        if (userRepository.existsByUsernameAndIdNot(userUpdateSO.getUsername().toLowerCase(), id)) {
+        if (userRepository.existsByUsernameAndIdNot(userUpdateSO.username().toLowerCase(), id)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username is already taken.");
         }
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found."));
-        user.setUsername(userUpdateSO.getUsername());
-        if (!passwordEncoder.matches(userUpdateSO.getPassword(), user.getPassword())) {
-            user.setPassword(passwordEncoder.encode(userUpdateSO.getPassword()));
+        user.setUsername(userUpdateSO.username());
+        if (StringUtils.hasLength(userUpdateSO.password())) {
+            user.setPassword(passwordEncoder.encode(userUpdateSO.password()));
         }
-        user.setEnabled(userUpdateSO.getEnabled());
+        user.setEnabled(userUpdateSO.enabled());
         user.getAuthorities().clear();
         user.getAuthorities().addAll(
-                userUpdateSO.getAuthorities().stream()
-                        .map(a -> new Authority(a.getId(), a.getName())).collect(Collectors.toList())
+                userUpdateSO.authorities().stream()
+                        .map(a -> new Authority(a.id(), a.name())).collect(Collectors.toList())
         );
         user.getAttributes().clear();
-        user.setAttributes(userUpdateSO.getAttributes());
+        user.setAttributes(userUpdateSO.attributes());
         user = userRepository.save(user);
-        UserSO result = userMapper.userToUserSO(user);
+        UserSO result = userComponent.toUserSO(user);
         LOGGER.debug("setUser({},{})={}", id, userUpdateSO, result);
         return result;
     }

@@ -12,21 +12,13 @@ import org.springframework.web.server.ResponseStatusException;
 import sk.janobono.api.service.so.AuthoritySO;
 import sk.janobono.dal.domain.Authority;
 import sk.janobono.dal.repository.AuthorityRepository;
-import sk.janobono.mapper.AuthorityMapper;
 
 @Service
 public class AuthorityApiService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthorityApiService.class);
 
-    private AuthorityMapper authorityMapper;
-
     private AuthorityRepository authorityRepository;
-
-    @Autowired
-    public void setAuthorityMapper(AuthorityMapper authorityMapper) {
-        this.authorityMapper = authorityMapper;
-    }
 
     @Autowired
     public void setAuthorityRepository(AuthorityRepository authorityRepository) {
@@ -35,13 +27,13 @@ public class AuthorityApiService {
 
     public Page<AuthoritySO> getAuthorities(Pageable pageable) {
         LOGGER.debug("getAuthorities({})", pageable);
-        return authorityRepository.findAll(pageable).map(authorityMapper::authorityToAuthoritySO);
+        return authorityRepository.findAll(pageable).map(this::toAuthoritySO);
     }
 
     public AuthoritySO getAuthority(Long id) {
         LOGGER.debug("getAuthority({})", id);
         return authorityRepository.findById(id)
-                .map(authorityMapper::authorityToAuthoritySO)
+                .map(this::toAuthoritySO)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Authority not found."));
     }
 
@@ -54,7 +46,7 @@ public class AuthorityApiService {
         Authority authority = new Authority();
         authority.setName(authorityName);
         authority = authorityRepository.save(authority);
-        AuthoritySO result = authorityMapper.authorityToAuthoritySO(authority);
+        AuthoritySO result = toAuthoritySO(authority);
         LOGGER.debug("addAuthority({})={}", authorityName, result);
         return result;
     }
@@ -66,7 +58,7 @@ public class AuthorityApiService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Authority not found."));
         authority.setName(authorityName);
         authority = authorityRepository.save(authority);
-        AuthoritySO result = authorityMapper.authorityToAuthoritySO(authority);
+        AuthoritySO result = toAuthoritySO(authority);
         LOGGER.debug("setAuthority({})={}", authorityName, result);
         return result;
     }
@@ -78,5 +70,9 @@ public class AuthorityApiService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Authority not found.");
         }
         authorityRepository.deleteById(id);
+    }
+
+    private AuthoritySO toAuthoritySO(Authority authority) {
+        return new AuthoritySO(authority.getId(), authority.getName());
     }
 }
