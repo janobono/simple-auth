@@ -149,7 +149,6 @@
 
                             <configuration>
                                 <autoCreateCustomNetworks>true</autoCreateCustomNetworks>
-
                                 <images>
                                     <!-- db -->
                                     <image>
