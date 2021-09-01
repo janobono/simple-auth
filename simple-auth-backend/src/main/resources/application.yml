@@ -36,12 +36,6 @@ spring:
             non_contextual_creation: true
     open-in-view: false
 
-  # ===============================
-  # = FLYWAY
-  # ===============================
-  flyway:
-    check-location: true
-
 app:
   issuer: ${SIMPLE_AUTH_ISSUER:simple-auth}
   jwt-expiration: ${SIMPLE_AUTH_EXPIRATION:1800}

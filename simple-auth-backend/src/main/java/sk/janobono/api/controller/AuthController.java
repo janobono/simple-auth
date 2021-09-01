@@ -13,7 +13,7 @@ import sk.janobono.api.service.so.UserSO;
 
 import javax.validation.Valid;
 
-@Tag(name = "authenticate", description = "authentication endpoint")
+@Tag(name = "auth", description = "authentication endpoint")
 @RestController
 @RequestMapping
 public class AuthController {

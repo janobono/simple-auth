@@ -23,7 +23,7 @@ public class User {
     private Boolean enabled;
 
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "simple_auth_authority",
+    @JoinTable(name = "simple_auth_user_authority",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id")
     )

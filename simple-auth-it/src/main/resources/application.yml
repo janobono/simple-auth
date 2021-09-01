@@ -1,0 +1,13 @@
+# ===============================
+# = LOGGING
+# ===============================
+logging:
+  level:
+    sk.janobono: debug
+
+# ===============================
+# = APP
+# ===============================
+app:
+  database-url: jdbc:postgresql://@docker.hostname@:15432
+  simple-auth-backend-url: ${APP_SIMPLE_AUTH_BACKEND_URL:http://@docker.hostname@:18081/api/backend}

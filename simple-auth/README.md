@@ -36,7 +36,7 @@ docker-compose down
 - [test_user.sql](test_user.sql)
 
 ```
-docker cp ./test_user.sql simple-auth_db_1:/test_user.sql
+docker cp ../simple-auth-it/src/test/resources/init.sql simple-auth_db_1:/test_user.sql
 docker exec -it simple-auth_db_1 bash
 psql "dbname='app' user='app' password='app' host='localhost'" -f /test_user.sql
 ```
@@ -47,13 +47,13 @@ psql "dbname='app' user='app' password='app' host='localhost'" -f /test_user.sql
 curl --header "Content-Type: application/json" \
 --request POST \
 --data '{"username":"trevor.ochmonek.dev","password":"MelmacAlf+456"}' \
-http://localhost/api/authenticate
+http://localhost/api/backend/authenticate
 ```
 
 ### current-user
 
 ```
-curl -H "Authorization: Bearer REPLACE_ME_WITH_TOKEN" http://localhost/api/current-user
+curl -H "Authorization: Bearer REPLACE_ME_WITH_TOKEN" http://localhost/api/backend/current-user
 ```
 
 ```json
@@ -70,14 +70,6 @@ curl -H "Authorization: Bearer REPLACE_ME_WITH_TOKEN" http://localhost/api/curre
     {
       "id": 2,
       "name": "manage-users"
-    },
-    {
-      "id": 3,
-      "name": "view-hotels"
-    },
-    {
-      "id": 4,
-      "name": "manage-hotels"
     }
   ],
   "attributes": {

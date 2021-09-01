@@ -13,4 +13,5 @@ mvn clean install
 ## structure
 - [backend](./simple-auth-backend/README.md)
 - [frontend](./simple-auth-frontend/README.md)
+- [integration tests](./simple-auth-it/README.md)
 - [local run](./simple-auth/README.md)

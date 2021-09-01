@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "info", description = "health endpoint")
+@Tag(name = "health", description = "health endpoint")
 @RestController
 @RequestMapping(path = "/health")
 public class HealthController {
