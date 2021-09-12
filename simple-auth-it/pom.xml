@@ -246,7 +246,38 @@
                             </run>
                         </image>
                         <!-- simple-auth-frontend -->
-                        <!-- TODO -->
+                        <image>
+                            <alias>simple-auth-frontend</alias>
+                            <name>${project.groupId}/simple-auth-frontend</name>
+                            <run>
+                                <hostname>simple-auth-frontend</hostname>
+                                <network>
+                                    <mode>custom</mode>
+                                    <name>simple-auth-network</name>
+                                    <alias>simple-auth</alias>
+                                </network>
+                                <ports>
+                                    <port>18082:3000</port>
+                                </ports>
+                                <dependsOn>
+                                    <container>simple-auth-backend</container>
+                                </dependsOn>
+                                <wait>
+                                    <http>
+                                        <url>http://${docker.hostname}:18082/api/health</url>
+                                        <method>GET</method>
+                                        <status>200</status>
+                                    </http>
+                                    <time>100000</time>
+                                </wait>
+                                <log>
+                                    <enabled>true</enabled>
+                                    <prefix>frontend</prefix>
+                                    <date>default</date>
+                                    <color>blue</color>
+                                </log>
+                            </run>
+                        </image>
                     </images>
                 </configuration>
             </plugin>

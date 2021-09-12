@@ -44,10 +44,7 @@
                         </goals>
                         <configuration>
                             <inputSpec>${project.basedir}/../simple-auth-backend/target/api-docs.yml</inputSpec>
-                            <generatorName>typescript-axios</generatorName>
-                            <configOptions>
-                                <fileNaming>kebab-case</fileNaming>
-                            </configOptions>
+                            <generatorName>javascript</generatorName>
                             <output>openapi/client</output>
                         </configuration>
                     </execution>
@@ -59,38 +56,6 @@
                         <version>${project.version}</version>
                     </dependency>
                 </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
-                <version>1.12.0</version>
-                <configuration>
-                    <nodeVersion>v14.17.4</nodeVersion>
-                    <installDirectory>..</installDirectory>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>install-npm</id>
-                        <goals>
-                            <goal>install-node-and-npm</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>npm-install</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>npm-build</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>run-script build</arguments>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>io.fabric8</groupId>
