@@ -3,19 +3,3 @@
 *.iws
 *.iml
 *.ipr
-
-### Maven ###
-.flattened-pom.xml
-
-### Node ###
-node/
-node_modules/
-.env.local
-.env.*.local
-npm-debug.log*
-package-lock.json
-
-# compiled output
-target/
-dist/
-openapi/

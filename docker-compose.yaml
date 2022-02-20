@@ -2,7 +2,7 @@ version: '3.2'
 
 services:
   db:
-    image: postgres:12-alpine
+    image: postgres:13-alpine
     ports:
       - 5432:5432
     environment:
@@ -16,7 +16,7 @@ services:
     image: sk.janobono/simple-auth-backend:latest
     restart: unless-stopped
     environment:
-      - SIMPLE_AUTH_DB_URL=jdbc:postgresql://db:5432/app
+      - DB_URL=jdbc:postgresql://db:5432/app
     labels:
       - traefik.enable=true
       - traefik.http.routers.auth.rule=PathPrefix(`/api/backend`)
@@ -30,7 +30,7 @@ services:
       - traefik.enable=true
       - traefik.http.routers.fe.rule=PathPrefix(`/`)
       - traefik.http.routers.fe.entrypoints=web
-      - traefik.http.services.fe.loadbalancer.server.port=3000
+      - traefik.http.services.fe.loadbalancer.server.port=80
 
   traefik:
     image: traefik:v2.3

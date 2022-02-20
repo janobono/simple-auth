@@ -4,8 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(name = "AuthenticationResponse")
 public record AuthenticationResponseSO(
-        String type,
-        String token,
-        Long expiresAt
+        String bearer
 ) {
 }

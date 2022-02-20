@@ -4,15 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import sk.janobono.api.service.so.AuthenticationRequestSO;
 import sk.janobono.api.service.so.AuthenticationResponseSO;
-import sk.janobono.api.service.so.UserSO;
 import sk.janobono.component.JwtToken;
-import sk.janobono.component.UserComponent;
 import sk.janobono.dal.domain.User;
 import sk.janobono.dal.repository.UserRepository;
 
@@ -25,8 +22,6 @@ public class AuthApiService {
 
     private JwtToken jwtToken;
 
-    private UserComponent userComponent;
-
     private UserRepository userRepository;
 
     @Autowired
@@ -37,11 +32,6 @@ public class AuthApiService {
     @Autowired
     public void setJwtToken(JwtToken jwtToken) {
         this.jwtToken = jwtToken;
-    }
-
-    @Autowired
-    public void setUserComponent(UserComponent userComponent) {
-        this.userComponent = userComponent;
     }
 
     @Autowired
@@ -65,19 +55,9 @@ public class AuthApiService {
 
         Long issuedAt = System.currentTimeMillis();
         AuthenticationResponseSO authenticationResponse = new AuthenticationResponseSO(
-                "Bearer",
-                jwtToken.generateToken(user, issuedAt),
-                jwtToken.expiresAt(issuedAt)
+                jwtToken.generateToken(user, issuedAt)
         );
         LOGGER.info("authenticate({}) - {}", authenticationRequestSO, authenticationResponse);
         return authenticationResponse;
-    }
-
-    public UserSO getCurrentUser() {
-        LOGGER.debug("getCurrentUser()");
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserSO result = userComponent.toUserSO(user);
-        LOGGER.debug("getCurrentUser()={}", result);
-        return result;
     }
 }

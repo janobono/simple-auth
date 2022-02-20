@@ -20,8 +20,6 @@ import sk.janobono.dal.domain.User;
 import sk.janobono.dal.repository.UserRepository;
 import sk.janobono.dal.specification.UserSpecification;
 
-import java.util.stream.Collectors;
-
 @Service
 public class UserApiService {
 
@@ -84,7 +82,7 @@ public class UserApiService {
         user.setEnabled(userCreateSO.enabled());
         user.getAuthorities().addAll(
                 userCreateSO.authorities().stream()
-                        .map(a -> new Authority(a.id(), a.name())).collect(Collectors.toList())
+                        .map(a -> new Authority(a.id(), a.name())).toList()
         );
         user.getAttributes().putAll(userCreateSO.attributes());
         user = userRepository.save(user);
@@ -109,7 +107,7 @@ public class UserApiService {
         user.getAuthorities().clear();
         user.getAuthorities().addAll(
                 userUpdateSO.authorities().stream()
-                        .map(a -> new Authority(a.id(), a.name())).collect(Collectors.toList())
+                        .map(a -> new Authority(a.id(), a.name())).toList()
         );
         user.getAttributes().clear();
         user.setAttributes(userUpdateSO.attributes());

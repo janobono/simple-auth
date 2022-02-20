@@ -9,19 +9,9 @@ values (currval('sq_simple_auth_user'), 'given_name', 'Trevor');
 insert into simple_auth_user_attribute(user_id, key, value)
 values (currval('sq_simple_auth_user'), 'family_name', 'Ochmonek');
 insert into simple_auth_user_attribute(user_id, key, value)
-values (currval('sq_simple_auth_user'), 'hotel_code', 'simple-123');
+values (currval('sq_simple_auth_user'), 'app_code', 'simple-123');
 
 insert into simple_auth_user_authority(user_id, authority_id)
 values (currval('sq_simple_auth_user'), 1);
 insert into simple_auth_user_authority(user_id, authority_id)
 values (currval('sq_simple_auth_user'), 2);
-
-insert into simple_auth_authority(id, name)
-values (nextval('sq_simple_auth_authority'), 'view-hotels');
-insert into simple_auth_user_authority(user_id, authority_id)
-values (currval('sq_simple_auth_user'), currval('sq_simple_auth_authority'));
-
-insert into simple_auth_authority(id, name)
-values (nextval('sq_simple_auth_authority'), 'manage-hotels');
-insert into simple_auth_user_authority(user_id, authority_id)
-values (currval('sq_simple_auth_user'), currval('sq_simple_auth_authority'));
