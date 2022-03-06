@@ -2,6 +2,8 @@
 
 Simple JWT Auth Application, SpringBoot backend and React.js frontend, Docker as deployment environment.
 
+![Frontend image](./frontend.png)
+
 ## build
 
 - [Docker](https://docs.docker.com/get-docker/)
