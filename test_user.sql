@@ -1,13 +1,12 @@
 insert into simple_auth_user(id, username, password, enabled)
-values (nextval('sq_simple_auth_user'), 'trevor.ochmonek.dev',
-        '$2a$10$DiZet0o1I9E1TogKsnTosuWr.jMuvFBnlknrLIcPhOebW0nXPyeXa', true);
+values (nextval('sq_simple_auth_user'), 'jimbop', '$2a$12$wWa8P0wPNm1.JLTP5Yavnu0xnp1tMT4Bqt2NI7eJJmyIM671MI0ki', true);
 
 insert into simple_auth_user_attribute(user_id, key, value)
-values (currval('sq_simple_auth_user'), 'email', 'trevor.ochmonek@melmac.com');
+values (currval('sq_simple_auth_user'), 'email', 'jimbo.pytlik@test.com');
 insert into simple_auth_user_attribute(user_id, key, value)
-values (currval('sq_simple_auth_user'), 'given_name', 'Trevor');
+values (currval('sq_simple_auth_user'), 'given_name', 'Jimbo');
 insert into simple_auth_user_attribute(user_id, key, value)
-values (currval('sq_simple_auth_user'), 'family_name', 'Ochmonek');
+values (currval('sq_simple_auth_user'), 'family_name', 'Pytlik');
 insert into simple_auth_user_attribute(user_id, key, value)
 values (currval('sq_simple_auth_user'), 'app_code', 'simple-123');
 

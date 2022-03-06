@@ -3,7 +3,7 @@
   "header": {
     "log-in": "Log In",
     "log-out": "Log Out",
-    "sign-up": "Sign Up"
+    "welcome": "Welcome dear user"
   },
   "footer": {
     "by": "by",
@@ -21,6 +21,7 @@
       "label": "Password",
       "required": "Password is required!"
     },
-    "submit": "Submit"
+    "submit": "Submit",
+    "error": "Username or password is not valid!"
   }
 }

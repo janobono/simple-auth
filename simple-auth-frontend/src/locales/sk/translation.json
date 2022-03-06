@@ -3,7 +3,7 @@
   "header": {
     "log-in": "Prihlásiť",
     "log-out": "Odhlásiť",
-    "sign-up": "Registrovať"
+    "welcome": "Vitaj drahý používateľ"
   },
   "footer": {
     "by": "vytvoril",
@@ -21,6 +21,7 @@
       "label": "Heslo",
       "required": "Heslo je povinné!"
     },
-    "submit": "Potvrdiť"
+    "submit": "Potvrdiť",
+    "error": "Neplatné používateľské meno alebo heslo!"
   }
 }

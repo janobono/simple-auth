@@ -1,25 +1,30 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import jwt_decode from 'jwt-decode';
 
+interface LoginForm {
+    username: string,
+    password: string
+}
+
 interface TokenPayload {
     exp: number,
     iat: number,
     iss: string,
-    sub: string,
+    sub: string
 }
 
 interface Payload {
     exp: Date,
     iat: Date,
     iss: string,
-    username: string,
+    username: string
 }
 
 export interface AuthContextValue {
     bearer: String | undefined,
     payload: Payload | undefined,
     onLogout: () => void,
-    onLogin: (username: string, password: string) => Promise<number>
+    onLogin: (data: LoginForm) => Promise<any>
 }
 
 const AuthContext = React.createContext<AuthContextValue>({
@@ -27,8 +32,7 @@ const AuthContext = React.createContext<AuthContextValue>({
     payload: undefined,
     onLogout: () => {
     },
-    onLogin: async (username, password) => {
-        return 500;
+    onLogin: async (data: LoginForm) => {
     }
 });
 
@@ -38,6 +42,7 @@ export const AuthContextProvider: FunctionComponent = (props) => {
 
     const decodeToken = (token: string) => {
         const decodedPayload = jwt_decode<TokenPayload>(token);
+        console.log(decodedPayload);
         if (decodedPayload) {
             if (decodedPayload.exp * 1000 > Date.now()) {
                 localStorage.setItem('token', token);
@@ -59,27 +64,22 @@ export const AuthContextProvider: FunctionComponent = (props) => {
         }
     }, []);
 
-    const login = async (username: string, password: string) => {
-        try {
-            const response = await fetch(
-                '/api/backend/authenticate',
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({username, password})
-                });
-            if (response.status === 200) {
-                const {bearer} = await response.json();
-                decodeToken(bearer);
-            }
-            return response.status;
-        } catch (error) {
-            console.log(error);
-            logout();
+    const login = async (data: LoginForm) => {
+        const response = await fetch(
+            '/api/backend/authenticate',
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+        if (response.status === 200) {
+            const {bearer} = await response.json();
+            decodeToken(bearer);
+        } else {
+            throw new Error('Something went wrong!!!');
         }
-        return 500;
     };
 
     const logout = () => {

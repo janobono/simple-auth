@@ -49,14 +49,8 @@ const Header: FunctionComponent = () => {
                                     authCtx.onLogout();
                                     navigate('/');
                                 }}>{t('header.log-out')}</Button>
-                                : <React.Fragment>
-                                    <Button colorScheme="teal" variant="solid" onClick={() => navigate('/sign-up')}>
-                                        {t('header.sign-up')}
-                                    </Button>
-                                    <Button colorScheme="teal" variant="outline" onClick={() => navigate('/log-in')}>
-                                        {t('header.log-in')}
-                                    </Button>
-                                </React.Fragment>
+                                : <Button colorScheme="teal" variant="outline" onClick={() => navigate('/log-in')}>
+                                    {t('header.log-in')}</Button>
                             }
                             <ColorModeSwitcher justifySelf="flex-end"/>
                             <LocaleSwitcher/>
@@ -65,8 +59,7 @@ const Header: FunctionComponent = () => {
                 </Flex>
                 {authCtx.payload &&
                     <Stack>
-                        <Text>Welcome dear
-                            user <strong>{authCtx.payload.username} {authCtx.payload.iat}</strong></Text>
+                        <Text>{t('header.welcome')}<span> </span><strong>{authCtx.payload.username}</strong></Text>
                     </Stack>
                 }
             </Container>

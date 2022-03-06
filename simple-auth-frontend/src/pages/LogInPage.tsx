@@ -1,10 +1,26 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useContext, useState } from 'react';
 import { FieldValues, useForm } from 'react-hook-form'
-import { Button, FormControl, FormErrorMessage, FormLabel, Input, } from '@chakra-ui/react'
+import {
+    Alert,
+    AlertIcon,
+    AlertTitle,
+    Button,
+    FormControl,
+    FormErrorMessage,
+    FormLabel,
+    Input,
+} from '@chakra-ui/react'
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
+import { useMutation } from 'react-query';
+import AuthContext from '../contexts/auth-context';
 
 const LogInPage: FunctionComponent = () => {
     const {t} = useTranslation();
+    const navigate = useNavigate();
+    const authCtx = useContext(AuthContext);
+
+    const [error, setError] = useState(false);
 
     const {
         handleSubmit,
@@ -12,8 +28,18 @@ const LogInPage: FunctionComponent = () => {
         formState: {errors, isSubmitting},
     } = useForm();
 
+    const {mutate} = useMutation(authCtx.onLogin, {
+        onSuccess: data => {
+            navigate('/');
+        },
+        onError: () => {
+            setError(true);
+        }
+    });
+
     const onSubmit = async (values: FieldValues) => {
-        alert(JSON.stringify(values, null, 2));
+        setError(false);
+        mutate({username: values.username, password: values.password});
     }
 
     return (
@@ -51,6 +77,13 @@ const LogInPage: FunctionComponent = () => {
             <Button mt={4} isLoading={isSubmitting} type="submit">
                 {t('logIn.submit')}
             </Button>
+
+            {error &&
+                <Alert status="error">
+                    <AlertIcon/>
+                    <AlertTitle mr={2}>{t('logIn.error')}</AlertTitle>
+                </Alert>
+            }
         </form>
     );
 }

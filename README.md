@@ -38,14 +38,14 @@ docker-compose down
 
 If you want you can import test user with attributes:
 
-| attribute   | value                      |
-|-------------|----------------------------|
-| username    | trevor.ochmonek.dev        |
-| password    | MelmacAlf+456              |
-| email       | trevor.ochmonek@melmac.com |
-| given_name  | Trevor                     |
-| family_name | Ochmonek                   |
-| app_code    | simple-123                 |
+| attribute   | value                 |
+|-------------|-----------------------|
+| username    | jimbop                |
+| password    | pass123               |
+| email       | jimbo.pytlik@test.com |
+| given_name  | Jimbo                |
+| family_name | Pytlik              |
+| app_code    | simple-123            |
 
 - [test_user.sql](./test_user.sql)
 
