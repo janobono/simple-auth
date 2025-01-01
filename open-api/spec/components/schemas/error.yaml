@@ -1,0 +1,25 @@
+ErrorCode:
+  type: string
+  enum:
+    - UNKNOWN
+    - NOT_FOUND
+    - UNAUTHORIZED
+    - FORBIDDEN
+    - AUTHORITY_NOT_FOUND
+    - INVALID_CAPTCHA
+    - INVALID_CREDENTIALS
+    - UNSUPPORTED_VALIDATION_TOKEN
+    - USER_EMAIL_IS_USED
+    - USER_NOT_CONFIRMED
+    - USER_IS_DISABLED
+    - USER_NOT_FOUND
+ErrorMessage:
+  type: object
+  properties:
+    code:
+      $ref: "#/ErrorCode"
+    message:
+      type: string
+    timestamp:
+      type: string
+      format: date-time

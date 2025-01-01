@@ -1,0 +1,68 @@
+get:
+  tags:
+    - user-controller
+  operationId: getUser
+  parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../components/schemas/common.yaml#/User"
+    "4XX":
+      $ref: "../responses/client-error.yaml"
+    "5XX":
+      $ref: "../responses/server-error.yaml"
+put:
+  tags:
+    - user-controller
+  operationId: setUser
+  parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../components/schemas/user.yaml#/UserProfile"
+    required: true
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../components/schemas/common.yaml#/User"
+    "4XX":
+      $ref: "../responses/client-error.yaml"
+    "5XX":
+      $ref: "../responses/server-error.yaml"
+delete:
+  tags:
+    - user-controller
+  operationId: deleteUser
+  parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+  responses:
+    "200":
+      description: OK
+    "4XX":
+      $ref: "../responses/client-error.yaml"
+    "5XX":
+      $ref: "../responses/server-error.yaml"

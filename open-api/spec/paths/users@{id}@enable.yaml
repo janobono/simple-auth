@@ -1,0 +1,28 @@
+patch:
+  tags:
+    - user-controller
+  operationId: setEnabled
+  parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../components/schemas/common.yaml#/BooleanValue"
+    required: true
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../components/schemas/common.yaml#/User"
+    "4XX":
+      $ref: "../responses/client-error.yaml"
+    "5XX":
+      $ref: "../responses/server-error.yaml"

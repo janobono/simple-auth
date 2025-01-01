@@ -1,0 +1,11 @@
+.git
+.idea
+data
+node_modules
+.dockerignore
+build.sh
+docker-compose.yml
+Dockerfile
+README.md
+npm-debug.log
+open-api

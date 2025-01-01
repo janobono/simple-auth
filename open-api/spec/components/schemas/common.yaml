@@ -1,0 +1,41 @@
+Authority:
+  type: string
+  enum:
+    - admin
+    - manager
+    - employee
+    - customer
+BooleanValue:
+  required:
+    - value
+  type: object
+  properties:
+    value:
+      type: boolean
+Captcha:
+  type: object
+  properties:
+    captchaToken:
+      type: string
+    captchaImage:
+      type: string
+User:
+  type: object
+  properties:
+    id:
+      type: integer
+      format: int64
+    email:
+      type: string
+    firstName:
+      type: string
+    lastName:
+      type: string
+    confirmed:
+      type: boolean
+    enabled:
+      type: boolean
+    authorities:
+      type: array
+      items:
+        $ref: "#/Authority"

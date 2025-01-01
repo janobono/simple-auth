@@ -1,0 +1,56 @@
+openapi: 3.0.1
+info:
+  title: Simple Auth Api
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api
+    description: Generated server url
+security:
+  - bearerAuth: [ ]
+paths:
+  #auth
+  /auth/change-email:
+    $ref: "./paths/auth@change-email.yaml"
+  /auth/change-password:
+    $ref: "./paths/auth@change-password.yaml"
+  /auth/change-user-details:
+    $ref: "./paths/auth@change-user-details.yaml"
+  /auth/confirm:
+    $ref: "./paths/auth@confirm.yaml"
+  /auth/reset-password:
+    $ref: "./paths/auth@reset-password.yaml"
+  /auth/sign-in:
+    $ref: "./paths/auth@sign-in.yaml"
+  /auth/sign-up:
+    $ref: "./paths/auth@sign-up.yaml"
+  /auth/user-detail:
+    $ref: "./paths/auth@user-detail.yaml"
+
+  #captcha
+  /captcha:
+    $ref: "./paths/captcha.yaml"
+
+  #health
+  /livez:
+    $ref: "./paths/livez.yaml"
+  /readyz:
+    $ref: "./paths/readyz.yaml"
+
+  #users
+  /users:
+    $ref: "./paths/users.yaml"
+  /users/{id}:
+    $ref: "./paths/users@{id}.yaml"
+  /users/{id}/authorities:
+    $ref: "./paths/users@{id}@authorities.yaml"
+  /users/{id}/confirm:
+    $ref: "./paths/users@{id}@confirm.yaml"
+  /users/{id}/enable:
+    $ref: "./paths/users@{id}@enable.yaml"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

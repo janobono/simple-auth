@@ -1,0 +1,93 @@
+# ===============================
+# = SERVER
+# ===============================
+server:
+  port: ${PORT:8080}
+  error:
+    whitelabel:
+      enabled: false
+  servlet:
+    context-path: ${CONTEXT_PATH:/api}
+
+# ===============================
+# = LOGGING
+# ===============================
+logging:
+  level:
+    sk.janobono.simple: ${LOG_LEVEL:debug}
+
+# ===============================
+# = SPRING
+# ===============================
+spring:
+  application:
+    name: simple-auth-spring
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  web:
+    resources:
+      add-mappings: false
+
+  # ===============================
+  # = DATASOURCE
+  # ===============================
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/app}
+    username: ${DB_USER:app}
+    password: ${DB_PASS:app}
+    hikari:
+      maximum-pool-size: ${DB_POOL_SIZE:5}
+      minimum-idle: ${DB_POOL_IDLE:2}
+
+  # ===============================
+  # = JPA
+  # ===============================
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+  # ===============================
+  # = MAIL
+  # ===============================
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:1025}
+    username: ${MAIL_USER}
+    password: ${MAIL_PASS}
+    properties:
+      mail:
+        smtp:
+          auth: ${MAIL_AUTH:false}
+          starttls:
+            enable: ${MAIL_TLS_ENABLE:false}
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+# ===============================
+# = APP
+# ===============================
+app:
+  common:
+    captcha-length: ${CAPTCHA_LENGTH:4}
+    confirm-path: ${CONFIRM_PATH:/confirm/}
+    mail: ${MAIL:simple@auth.org}
+    web-url: ${WEB_URL:http://localhost:5173}
+  auth:
+    sign-up-token-expiration: ${SIGN_UP_TOKEN_EXPIRES_IN:1440}
+    reset-password-token-expiration: ${RESET_PASSWORD_TOKEN_EXPIRES_IN:1440}
+  jwt:
+    issuer: ${TOKEN_ISSUER:simple}
+    expiration: ${TOKEN_EXPIRES_IN:120}
+  security:
+    public-path-pattern-regex: ${SECURITY_PUBLIC_PATH_PATTERN_REGEX:^(/livez|/readyz|/captcha|/auth/(confirm|reset-password|sign-in|sign-up))$}
+  verification:
+    issuer: ${VERIFICATION_TOKEN_ISSUER:simple-verification}
+  cors:
+    allowedOrigins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}
+    allowedMethods: ${CORS_ALLOWED_METHODS:GET,POST,PUT,OPTIONS,PATCH,DELETE}
+    allowedHeaders: ${CORS_ALLOWED_HEADERS:Authorization,Content-Type}
+    allowCredentials: ${CORS_ALLOW_CREDENTIALS:true}

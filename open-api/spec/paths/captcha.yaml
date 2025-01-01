@@ -1,0 +1,15 @@
+get:
+  tags:
+    - captcha-controller
+  operationId: getCaptcha
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../components/schemas/common.yaml#/Captcha"
+    "4XX":
+      $ref: "../responses/client-error.yaml"
+    "5XX":
+      $ref: "../responses/server-error.yaml"

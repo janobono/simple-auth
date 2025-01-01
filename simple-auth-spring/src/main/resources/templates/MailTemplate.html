@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <title th:text="${title}">Mail Title</title>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+</head>
+<body>
+    <header>
+        <h1 th:text="${title}">Mail Title</h1>
+    </header>
+    <main th:each="line : ${lines}">
+        <p th:text="${line}">This will be a line.</p>
+    </main>
+    <footer>
+        <a
+                href="/"
+                th:href="@{${linkHref}}"
+                th:if="${isLink}"
+                th:text="${linkText}"
+        >view</a>
+    </footer>
+</body>
+</html>

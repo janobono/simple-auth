@@ -1,0 +1,67 @@
+get:
+  tags:
+    - user-controller
+  operationId: getUsers
+  parameters:
+    - name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 0
+    - name: size
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 20
+    - name: sort
+      in: query
+      required: false
+      schema:
+        type: array
+        default: [ 'email','ASC' ]
+        items:
+          type: string
+    - name: searchField
+      in: query
+      required: false
+      schema:
+        type: string
+    - name: email
+      in: query
+      required: false
+      schema:
+        type: string
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../components/schemas/user.yaml#/PageUser"
+    "4XX":
+      $ref: "../responses/client-error.yaml"
+    "5XX":
+      $ref: "../responses/server-error.yaml"
+post:
+  tags:
+    - user-controller
+  operationId: addUser
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../components/schemas/user.yaml#/UserCreate"
+    required: true
+  responses:
+    "201":
+      description: Created
+      content:
+        application/json:
+          schema:
+            $ref: "../components/schemas/common.yaml#/User"
+    "4XX":
+      $ref: "../responses/client-error.yaml"
+    "5XX":
+      $ref: "../responses/server-error.yaml"

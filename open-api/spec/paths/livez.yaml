@@ -1,0 +1,15 @@
+get:
+  tags:
+    - health-controller
+  operationId: livez
+  responses:
+    "200":
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "../components/schemas/health.yaml#/HealthStatus"
+    "4XX":
+      $ref: "../responses/client-error.yaml"
+    "5XX":
+      $ref: "../responses/server-error.yaml"

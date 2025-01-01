@@ -1,0 +1,137 @@
+ChangeEmail:
+  required:
+    - email
+    - password
+    - captchaText
+    - captchaToken
+  type: object
+  properties:
+    email:
+      maxLength: 255
+      minLength: 0
+      type: string
+      format: email
+    password:
+      maxLength: 255
+      minLength: 0
+      type: string
+    captchaText:
+      type: string
+    captchaToken:
+      type: string
+ChangePassword:
+  required:
+    - oldPassword
+    - newPassword
+    - captchaText
+    - captchaToken
+  type: object
+  properties:
+    oldPassword:
+      maxLength: 255
+      minLength: 0
+      type: string
+    newPassword:
+      maxLength: 255
+      minLength: 0
+      type: string
+    captchaText:
+      type: string
+    captchaToken:
+      type: string
+ChangeUserDetails:
+  required:
+    - firstName
+    - lastName
+    - captchaText
+    - captchaToken
+  type: object
+  properties:
+    firstName:
+      maxLength: 255
+      minLength: 0
+      type: string
+    lastName:
+      maxLength: 255
+      minLength: 0
+      type: string
+    captchaText:
+      type: string
+    captchaToken:
+      type: string
+SignUp:
+  required:
+    - email
+    - password
+    - firstName
+    - lastName
+    - captchaText
+    - captchaToken
+  type: object
+  properties:
+    email:
+      maxLength: 255
+      minLength: 0
+      type: string
+      format: email
+    password:
+      maxLength: 255
+      minLength: 0
+      type: string
+    firstName:
+      maxLength: 255
+      minLength: 0
+      type: string
+    lastName:
+      maxLength: 255
+      minLength: 0
+      type: string
+    captchaText:
+      type: string
+    captchaToken:
+      type: string
+SignIn:
+  required:
+    - email
+    - password
+  type: object
+  properties:
+    email:
+      maxLength: 255
+      minLength: 0
+      type: string
+      format: email
+    password:
+      maxLength: 255
+      minLength: 0
+      type: string
+AuthenticationResponse:
+  type: object
+  properties:
+    token:
+      type: string
+    type:
+      type: string
+ResetPassword:
+  required:
+    - email
+    - captchaText
+    - captchaToken
+  type: object
+  properties:
+    email:
+      maxLength: 255
+      minLength: 0
+      type: string
+      format: email
+    captchaText:
+      type: string
+    captchaToken:
+      type: string
+Confirmation:
+  required:
+    - token
+  type: object
+  properties:
+    token:
+      type: string

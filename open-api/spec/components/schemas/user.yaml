@@ -1,0 +1,69 @@
+PageUser:
+  type: object
+  properties:
+    totalElements:
+      type: integer
+      format: int64
+    totalPages:
+      type: integer
+      format: int32
+    first:
+      type: boolean
+    last:
+      type: boolean
+    page:
+      type: integer
+      format: int32
+    size:
+      type: integer
+      format: int32
+    content:
+      type: array
+      items:
+        $ref: "./common.yaml#/User"
+    empty:
+      type: boolean
+UserCreate:
+  required:
+    - email
+    - firstName
+    - lastName
+    - confirmed
+    - enabled
+  type: object
+  properties:
+    email:
+      maxLength: 255
+      minLength: 0
+      type: string
+      format: email
+    firstName:
+      maxLength: 255
+      minLength: 0
+      type: string
+    lastName:
+      maxLength: 255
+      minLength: 0
+      type: string
+    confirmed:
+      type: boolean
+    enabled:
+      type: boolean
+    authorities:
+      type: array
+      items:
+        $ref: "./common.yaml#/Authority"
+UserProfile:
+  required:
+    - firstName
+    - lastName
+  type: object
+  properties:
+    firstName:
+      maxLength: 255
+      minLength: 0
+      type: string
+    lastName:
+      maxLength: 255
+      minLength: 0
+      type: string

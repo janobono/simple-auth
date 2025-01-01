@@ -1,0 +1,21 @@
+post:
+  tags:
+    - auth-controller
+  operationId: signUp
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: "../components/schemas/auth.yaml#/SignUp"
+    required: true
+  responses:
+    "201":
+      description: Created
+      content:
+        application/json:
+          schema:
+            $ref: "../components/schemas/auth.yaml#/AuthenticationResponse"
+    "4XX":
+      $ref: "../responses/client-error.yaml"
+    "5XX":
+      $ref: "../responses/server-error.yaml"
