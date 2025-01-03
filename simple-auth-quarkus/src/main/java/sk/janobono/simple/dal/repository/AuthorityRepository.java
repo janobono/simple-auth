@@ -12,8 +12,7 @@ import java.util.Optional;
 public class AuthorityRepository implements PanacheRepository<AuthorityDo> {
 
     public Optional<AuthorityDo> findByAuthority(final Authority authority) {
-// TODO
-        return Optional.empty();
+        return Optional.ofNullable(find("authority", authority).firstResult());
     }
 
     public AuthorityDo getAuthorityDo(final Authority authority) {
