@@ -87,6 +87,7 @@ Docker runtime is enough to build everything. Every subproject contains build do
 
 ### server
 
+- [simple-auth-quarkus](./simple-auth-quarkus/README.md)
 - [simple-auth-spring](./simple-auth-spring/README.md)
 
 ## run application
@@ -100,6 +101,7 @@ docker-compose.yaml file. All the prepared applications share the same endpoints
 - [livez](http://localhost/api/livez)
 - [readyz](http://localhost/api/readyz)
 - [fe](http://localhost/)
+- default user **simple@auth.org**/**simple**
 
 **infra.yaml** - base infrastructure services reused by other docker compose yaml files.
 

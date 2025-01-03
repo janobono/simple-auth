@@ -1,10 +1,8 @@
 package sk.janobono.simple.api;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
 import sk.janobono.simple.api.model.HealthStatus;
 
-@RequiredArgsConstructor
 @RestController
 public class HealthController implements LivezApi, ReadyzApi {
 

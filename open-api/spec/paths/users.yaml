@@ -19,10 +19,8 @@ get:
       in: query
       required: false
       schema:
-        type: array
-        default: [ 'email','ASC' ]
-        items:
-          type: string
+        type: string
+        default: 'email ASC'
     - name: searchField
       in: query
       required: false

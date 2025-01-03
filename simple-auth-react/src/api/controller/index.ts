@@ -41,7 +41,7 @@ export const setPageableQueryParams = (queryParams: URLSearchParams, pageable?: 
         setQueryParam(queryParams, 'page', pageable.page);
         setQueryParam(queryParams, 'size', pageable.size);
         if (pageable.sort) {
-            setQueryParam(queryParams, 'sort', `${pageable.sort.field},${pageable.sort.asc ? 'ASC' : 'DESC'}`);
+            setQueryParam(queryParams, 'sort', `${pageable.sort.field} ${pageable.sort.asc ? 'ASC' : 'DESC'}`);
         }
     }
 }

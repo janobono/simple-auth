@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN mvn clean install -DskipTests
+RUN mvn package -DskipTests
 
 FROM public.ecr.aws/amazoncorretto/amazoncorretto:21-al2023-headless AS production
 

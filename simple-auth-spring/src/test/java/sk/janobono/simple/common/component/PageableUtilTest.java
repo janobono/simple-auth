@@ -8,8 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(SpringExtension.class)
@@ -44,7 +42,7 @@ class PageableUtilTest {
     @Test
     void toPageable_whenValidInput_thenResult() {
         // WHEN
-        final Pageable pageable = pageableUtil.toPageable(10, 100, List.of("id", "ASC"), "id", false);
+        final Pageable pageable = pageableUtil.toPageable(10, 100, "id ASC", "id", false);
 
         // THEN
         assertThat(pageable).isNotNull();

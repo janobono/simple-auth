@@ -15,7 +15,6 @@ const PATH = CONTEXT_PATH + 'users';
 
 export interface UserSearchCriteria {
     searchField?: string;
-    username?: string;
     email?: string;
 }
 
@@ -25,9 +24,6 @@ export const getUsers = (criteria?: UserSearchCriteria, pageable?: Pageable, acc
     if (criteria) {
         if (criteria.searchField) {
             setQueryParam(queryParams, 'searchField', criteria.searchField);
-        }
-        if (criteria.username) {
-            setQueryParam(queryParams, 'username', criteria.username);
         }
         if (criteria.email) {
             setQueryParam(queryParams, 'email', criteria.email);

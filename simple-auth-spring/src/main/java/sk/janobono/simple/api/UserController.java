@@ -40,7 +40,7 @@ public class UserController implements UsersApi {
     public PageUser getUsers(
             final Integer page,
             final Integer size,
-            final List<String> sort,
+            final String sort,
             final String searchField,
             final String email
     ) {
