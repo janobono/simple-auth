@@ -6,6 +6,7 @@ import io.quarkus.qute.Template;
 import io.smallrye.common.annotation.NonBlocking;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import lombok.RequiredArgsConstructor;
 import org.jboss.logging.Logger;
 import sk.janobono.simple.business.model.mail.MailContentData;
 import sk.janobono.simple.business.model.mail.MailData;
@@ -15,17 +16,13 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @ApplicationScoped
 public class MailService {
 
-    @Inject
-    Logger log;
-
-    @Inject
-    Mailer mailer;
-
-    @Inject
-    Template email;
+    private final Logger log;
+    private final Mailer mailer;
+    private final Template email;
 
     public void sendEmail(final MailData mailData) {
         try {

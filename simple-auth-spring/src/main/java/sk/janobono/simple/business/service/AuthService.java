@@ -234,7 +234,7 @@ public class AuthService {
         final String token = verificationToken.generateToken(
                 data,
                 issuedAt,
-                issuedAt + TimeUnit.MINUTES.toMillis(authConfigProperties.resetPasswordTokenExpiration())
+                issuedAt + TimeUnit.MINUTES.toMillis(authConfigProperties.signUpTokenExpiration())
         );
 
         mailService.sendEmail(MailData.builder()

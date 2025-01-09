@@ -2,13 +2,21 @@ package sk.janobono.simple.dal.repository;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import sk.janobono.simple.common.exception.SimpleAuthServiceException;
 import sk.janobono.simple.common.model.PageDto;
 import sk.janobono.simple.common.model.PageableDto;
 import sk.janobono.simple.common.model.UserSearchCriteriaDto;
 import sk.janobono.simple.dal.domain.UserDo;
-
-import java.util.*;
 
 @ApplicationScoped
 public class UserRepository implements PanacheRepository<UserDo> {
@@ -26,71 +34,111 @@ public class UserRepository implements PanacheRepository<UserDo> {
     }
 
     public PageDto<UserDo> findAll(final UserSearchCriteriaDto criteria, final PageableDto pageable) {
-        final StringBuilder query = new StringBuilder("1=1");  // Always true to allow dynamic appending
-        final Map<String, Object> params = new HashMap<>();
-
-        Optional.ofNullable(criteria.searchField()).filter(s -> !s.isBlank()).ifPresent(value -> {
-            final String[] fieldValues = value.split(" ");
-            final List<String> subQueries = new ArrayList<>();
-            for (String fieldValue : fieldValues) {
-                fieldValue = "%" + fieldValue + "%";
-                final StringBuilder subQuery = new StringBuilder("1=1");
-
-                subQuery.append(" AND LOWER(UNACCENT(email)) like :subEmail%d".formatted(subQueries.size()));
-                params.put("subEmail%d".formatted(subQueries.size()), fieldValue);
-
-                subQuery.append(" AND LOWER(UNACCENT(firstName)) like :firstName%d".formatted(subQueries.size()));
-                params.put("firstName%d".formatted(subQueries.size()), fieldValue);
-
-                subQuery.append(" AND LOWER(UNACCENT(lastName)) like :lastName%d".formatted(subQueries.size()));
-                params.put("lastName%d".formatted(subQueries.size()), fieldValue);
-
-                subQueries.add(subQuery.toString());
-            }
-
-            if (!subQueries.isEmpty()) {
-                query.append(" AND (");
-                for (int i = 0; i < subQueries.size(); i++) {
-                    query.append("(%s)".formatted(subQueries.get(i)));
-                    if (i != subQueries.size() - 1) {
-                        query.append(" OR ");
-                    }
-                }
-                query.append(")");
-            }
-        });
-
-        Optional.ofNullable(criteria.email()).filter(s -> !s.isBlank()).ifPresent(value -> {
-            query.append(" AND email = :email");
-            params.put("email", value);
-        });
-
-        final long totalElements = count(query.toString(), params);
-        final List<UserDo> content = find(query.toString() + " ORDER BY " + pageable.sort(), params)
-                .page(pageable.page(), pageable.size())
-                .list();
+        final long totalElements = getUsersTotalElements(criteria);
+        final List<UserDo> content = getUsersContent(criteria, pageable);
 
         final int totalPages = (int) totalElements / pageable.size();
 
         return new PageDto<>(
-                totalElements,
-                totalPages,
-                pageable.page() == 0,
-                pageable.page() == totalPages - 1,
-                pageable.page(),
-                content.size(),
-                content,
-                content.isEmpty()
+            totalElements,
+            totalPages,
+            pageable.page() == 0,
+            pageable.page() == totalPages - 1,
+            pageable.page(),
+            content.size(),
+            content,
+            content.isEmpty()
         );
     }
 
     public UserDo getUserDo(final Long id) {
         return findByIdOptional(id)
-                .orElseThrow(() -> SimpleAuthServiceException.USER_NOT_FOUND.exception("User with id {0} not found", id));
+            .orElseThrow(() -> SimpleAuthServiceException.USER_NOT_FOUND.exception("User with id {0} not found", id));
     }
 
     public UserDo getUserDo(final String email) {
         return findByEmail(email)
-                .orElseThrow(() -> SimpleAuthServiceException.USER_NOT_FOUND.exception("User with email {0} not found", email));
+            .orElseThrow(() -> SimpleAuthServiceException.USER_NOT_FOUND.exception("User with email {0} not found", email));
+    }
+
+    private long getUsersTotalElements(final UserSearchCriteriaDto criteria) {
+        final EntityManager entityManager = getEntityManager();
+        final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+        final Root<UserDo> root = criteriaQuery.from(UserDo.class);
+
+        criteriaQuery.select(criteriaBuilder.count(root));
+        criteriaQuery.where(toPredicate(criteria, root, criteriaQuery, criteriaBuilder));
+
+        return entityManager.createQuery(criteriaQuery).getSingleResult();
+    }
+
+    private List<UserDo> getUsersContent(final UserSearchCriteriaDto criteria, final PageableDto pageable) {
+        final EntityManager entityManager = getEntityManager();
+        final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<UserDo> criteriaQuery = criteriaBuilder.createQuery(UserDo.class);
+        final Root<UserDo> root = criteriaQuery.from(UserDo.class);
+
+        criteriaQuery.select(root);
+        criteriaQuery.where(toPredicate(criteria, root, criteriaQuery, criteriaBuilder));
+
+        if (pageable.ascending()) {
+            criteriaQuery.orderBy(criteriaBuilder.asc(root.get(pageable.sortBy())));
+        } else {
+            criteriaQuery.orderBy(criteriaBuilder.desc(root.get(pageable.sortBy())));
+        }
+
+        final var query = entityManager.createQuery(criteriaQuery);
+        query.setFirstResult(pageable.page() * pageable.size());
+        query.setMaxResults(pageable.size());
+
+        return query.getResultList();
+    }
+
+    public Predicate toPredicate(
+        final UserSearchCriteriaDto criteria,
+        final Root<UserDo> root,
+        final CriteriaQuery<?> criteriaQuery,
+        final CriteriaBuilder criteriaBuilder
+    ) {
+        if (Optional.ofNullable(criteria.searchField()).filter(s -> !s.isBlank()).isEmpty()
+            && Optional.ofNullable(criteria.email()).filter(s -> !s.isBlank()).isEmpty()
+        ) {
+            return criteriaQuery.getRestriction();
+        }
+
+        final List<Predicate> predicates = new ArrayList<>();
+
+        if (Optional.ofNullable(criteria.searchField()).filter(s -> !s.isBlank()).isPresent()) {
+            predicates.add(searchFieldToPredicate(criteria.searchField(), root, criteriaBuilder));
+        }
+
+        if (Optional.ofNullable(criteria.email()).filter(s -> !s.isBlank()).isPresent()) {
+            predicates.add(criteriaBuilder.equal(root.get("email"), criteria.email()));
+        }
+
+        return criteriaQuery.where(criteriaBuilder.and(predicates.toArray(Predicate[]::new))).getRestriction();
+    }
+
+    private Predicate searchFieldToPredicate(
+        final String searchField,
+        final Root<?> root,
+        final CriteriaBuilder criteriaBuilder
+    ) {
+        final List<Predicate> predicates = new ArrayList<>();
+        final String[] fieldValues = searchField.split(" ");
+        for (String fieldValue : fieldValues) {
+            fieldValue = "%" + fieldValue + "%";
+            final List<Predicate> subPredicates = new ArrayList<>();
+            subPredicates.add(criteriaBuilder.like(toScDf(root.get("email"), criteriaBuilder), fieldValue));
+            subPredicates.add(criteriaBuilder.like(toScDf(root.get("firstName"), criteriaBuilder), fieldValue));
+            subPredicates.add(criteriaBuilder.like(toScDf(root.get("lastName"), criteriaBuilder), fieldValue));
+            predicates.add(criteriaBuilder.or(subPredicates.toArray(Predicate[]::new)));
+        }
+        return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
+    }
+
+    private Expression<String> toScDf(final Path<String> path, final CriteriaBuilder criteriaBuilder) {
+        return criteriaBuilder.lower(criteriaBuilder.function("unaccent", String.class, path));
     }
 }
