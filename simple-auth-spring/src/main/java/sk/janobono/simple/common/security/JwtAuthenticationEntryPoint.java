@@ -1,4 +1,4 @@
-package sk.janobono.simple.common.security.jwt;
+package sk.janobono.simple.common.security;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

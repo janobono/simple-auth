@@ -7,15 +7,14 @@ import io.smallrye.jwt.auth.principal.ParseException;
 import io.smallrye.jwt.build.Jwt;
 import io.smallrye.jwt.build.JwtClaimsBuilder;
 import jakarta.enterprise.context.ApplicationScoped;
-import org.eclipse.microprofile.jwt.JsonWebToken;
-import sk.janobono.simple.common.config.VerificationConfigProperties;
-
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.util.HashMap;
 import java.util.Map;
+import org.eclipse.microprofile.jwt.JsonWebToken;
+import sk.janobono.simple.common.config.VerificationConfigProperties;
 
 @ApplicationScoped
 public class VerificationToken {
@@ -31,7 +30,7 @@ public class VerificationToken {
         } catch (final NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
-        keyGen.initialize(1024);
+        keyGen.initialize(2048);
         final KeyPair keyPair = keyGen.generateKeyPair();
         this.privateKey = keyPair.getPrivate();
         this.issuer = verificationConfigProperties.issuer();
@@ -42,9 +41,10 @@ public class VerificationToken {
 
     public String generateToken(final Map<String, String> data, final Long issuedAt, final Long expiresAt) {
         final JwtClaimsBuilder jwtBuilder = Jwt.claims()
-                .issuer(issuer)
-                .issuedAt(issuedAt)
-                .expiresAt(expiresAt);
+            .issuer(issuer)
+            .issuedAt(issuedAt)
+            .expiresAt(expiresAt)
+            .subject("verification");
 
         data.forEach(jwtBuilder::claim);
 
@@ -54,7 +54,7 @@ public class VerificationToken {
     public Map<String, String> parseToken(final String token) {
         final JsonWebToken jwt = decodeToken(token);
         final Map<String, String> result = new HashMap<>();
-        jwt.getClaimNames().forEach((key) -> result.put(key, jwt.getClaim(key)));
+        jwt.getClaimNames().forEach((key) -> result.put(key, jwt.getClaim(key).toString()));
         return result;
     }
 

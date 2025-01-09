@@ -1,4 +1,4 @@
-package sk.janobono.simple.common.config;
+package sk.janobono.simple.common.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -20,17 +20,15 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import sk.janobono.simple.business.service.UserService;
 import sk.janobono.simple.common.component.JwtToken;
-import sk.janobono.simple.common.security.ApplicationAccessDeniedHandler;
-import sk.janobono.simple.common.security.ApplicationAuthenticationEntryPoint;
-import sk.janobono.simple.common.security.jwt.JwtAuthenticationEntryPoint;
-import sk.janobono.simple.common.security.jwt.JwtAuthenticationFilter;
+import sk.janobono.simple.common.config.CorsConfigProperties;
+import sk.janobono.simple.common.config.SecurityConfigProperties;
 
 import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
+public class SecurityConfiguration {
 
     private final HandlerExceptionResolver handlerExceptionResolver;
     private final CorsConfigProperties corsConfigProperties;

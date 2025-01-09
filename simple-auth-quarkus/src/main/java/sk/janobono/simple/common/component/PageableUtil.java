@@ -8,6 +8,10 @@ import sk.janobono.simple.common.model.PageableDto;
 public class PageableUtil {
 
     public PageableDto toPageable(final Integer page, final Integer size, final String sort, final String sortField, final boolean ascending) {
+        if (Optional.ofNullable(sort).map(String::isBlank).orElse(true) && Optional.ofNullable(sortField).map(String::isBlank).orElse(true)) {
+            throw new IllegalArgumentException("Invalid sort order");
+        }
+
         return new PageableDto(
             Optional.ofNullable(page).orElse(0),
             Optional.ofNullable(size).orElse(20),
@@ -19,7 +23,7 @@ public class PageableUtil {
                 .filter(s -> !s.isBlank())
                 .map(s -> s.split(" "))
                 .map(s -> s.length <= 1 || "asc".equalsIgnoreCase(s[1]))
-                .orElseGet(() -> ascending)
+                .orElse(ascending)
         );
     }
 }

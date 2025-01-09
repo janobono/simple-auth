@@ -39,7 +39,7 @@ public class JwtToken {
         } catch (final NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
-        keyGen.initialize(1024);
+        keyGen.initialize(2048);
         final KeyPair keyPair = keyGen.generateKeyPair();
         this.privateKey = keyPair.getPrivate();
         this.expiration = TimeUnit.MINUTES.toMillis(jwtConfigProperties.expiration());

@@ -6,9 +6,6 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import org.springframework.stereotype.Component;
-import sk.janobono.simple.common.config.VerificationConfigProperties;
-
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -17,6 +14,8 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.stereotype.Component;
+import sk.janobono.simple.common.config.VerificationConfigProperties;
 
 @Component
 public class VerificationToken {
@@ -31,7 +30,7 @@ public class VerificationToken {
         } catch (final NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
-        keyGen.initialize(1024);
+        keyGen.initialize(2048);
         final KeyPair keyPair = keyGen.generateKeyPair();
         this.algorithm = Algorithm.RSA256((RSAPublicKey) keyPair.getPublic(), (RSAPrivateKey) keyPair.getPrivate());
         this.issuer = verificationConfigProperties.issuer();
@@ -40,9 +39,10 @@ public class VerificationToken {
     public String generateToken(final Map<String, String> data, final Long issuedAt, final Long expiresAt) {
         try {
             final JWTCreator.Builder jwtBuilder = JWT.create()
-                    .withIssuer(issuer)
-                    .withIssuedAt(new Date(issuedAt))
-                    .withExpiresAt(new Date(expiresAt));
+                .withIssuer(issuer)
+                .withIssuedAt(new Date(issuedAt))
+                .withExpiresAt(new Date(expiresAt))
+                .withSubject("verification");
             data.forEach(jwtBuilder::withClaim);
             return jwtBuilder.sign(algorithm);
         } catch (final Exception e) {
@@ -59,8 +59,8 @@ public class VerificationToken {
 
     private DecodedJWT decodeToken(final String token) throws JWTVerificationException {
         final JWTVerifier verifier = JWT.require(algorithm)
-                .withIssuer(issuer)
-                .build();
+            .withIssuer(issuer)
+            .build();
         return verifier.verify(token);
     }
 }
