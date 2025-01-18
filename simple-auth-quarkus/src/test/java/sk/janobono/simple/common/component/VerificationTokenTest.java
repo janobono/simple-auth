@@ -2,12 +2,14 @@ package sk.janobono.simple.common.component;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.quarkus.test.junit.QuarkusTest;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import sk.janobono.simple.common.config.VerificationConfigProperties;
 
+@QuarkusTest
 class VerificationTokenTest {
 
     @Test

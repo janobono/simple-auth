@@ -5,6 +5,6 @@ import jakarta.validation.constraints.NotEmpty;
 
 @ConfigMapping(prefix = "app.verification")
 public interface VerificationConfigProperties {
-    @NotEmpty
+
     String issuer();
 }

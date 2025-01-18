@@ -2,12 +2,14 @@ package sk.janobono.simple.common.component;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.quarkus.test.junit.QuarkusTest;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import sk.janobono.simple.api.model.Authority;
 import sk.janobono.simple.common.config.JwtConfigProperties;
 
+@QuarkusTest
 class JwtTokenTest {
 
     @Test

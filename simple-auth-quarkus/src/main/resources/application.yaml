@@ -37,7 +37,14 @@ app:
   verification:
     issuer: ${VERIFICATION_TOKEN_ISSUER:simple-verification}
   cors:
-    allowedOrigins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}
-    allowedMethods: ${CORS_ALLOWED_METHODS:GET,POST,PUT,OPTIONS,PATCH,DELETE}
-    allowedHeaders: ${CORS_ALLOWED_HEADERS:Authorization,Content-Type}
-    allowCredentials: ${CORS_ALLOW_CREDENTIALS:true}
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}
+    allowed-methods: ${CORS_ALLOWED_METHODS:GET,POST,PUT,OPTIONS,PATCH,DELETE}
+    allowed-headers: ${CORS_ALLOWED_HEADERS:Authorization,Content-Type}
+    allow-credentials: ${CORS_ALLOW_CREDENTIALS:true}
+    exposed-headers: ${CORS_EXPOSED_HEADERS:Authorization}
+
+"%test":
+  quarkus:
+    hibernate-orm:
+      database:
+        generation: drop-and-create

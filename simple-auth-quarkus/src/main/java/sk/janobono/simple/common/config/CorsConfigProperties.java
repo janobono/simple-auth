@@ -7,13 +7,11 @@ import java.util.List;
 
 @ConfigMapping(prefix = "app.cors")
 public interface CorsConfigProperties {
-    @NotEmpty
+
     List<String> allowedOrigins();
 
-    @NotEmpty
     List<String> allowedMethods();
 
-    @NotEmpty
     List<String> allowedHeaders();
 
     List<String> exposedHeaders();

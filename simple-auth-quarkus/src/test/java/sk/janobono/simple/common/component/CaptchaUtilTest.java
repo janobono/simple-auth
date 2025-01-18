@@ -2,11 +2,13 @@ package sk.janobono.simple.common.component;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import sk.janobono.simple.common.config.CommonConfigProperties;
 import sk.janobono.simple.common.exception.ApplicationException;
 
+@QuarkusTest
 class CaptchaUtilTest {
 
     @Test

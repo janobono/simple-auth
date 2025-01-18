@@ -6,9 +6,8 @@ import jakarta.validation.constraints.NotNull;
 
 @ConfigMapping(prefix = "app.jwt")
 public interface JwtConfigProperties {
-    @NotEmpty
+
     String issuer();
 
-    @NotNull
     Integer expiration();
 }

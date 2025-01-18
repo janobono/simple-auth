@@ -1,5 +1,6 @@
 package sk.janobono.simple.common.security;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;
 import jakarta.ws.rs.container.ContainerResponseFilter;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import sk.janobono.simple.common.config.CorsConfigProperties;
 
 @RequiredArgsConstructor
+@ApplicationScoped
 @Provider
 public class CorsFilter implements ContainerResponseFilter {
 

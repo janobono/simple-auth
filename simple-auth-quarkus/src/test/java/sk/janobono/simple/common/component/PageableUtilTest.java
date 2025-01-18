@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import sk.janobono.simple.common.model.PageableDto;
 
+@QuarkusTest
 class PageableUtilTest {
 
     private PageableUtil pageableUtil;

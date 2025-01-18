@@ -5,6 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 
 @ConfigMapping(prefix = "app.security")
 public interface SecurityConfigProperties {
-    @NotBlank
+
     String publicPathPatternRegex();
 }

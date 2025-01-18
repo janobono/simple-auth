@@ -4,6 +4,8 @@ import io.quarkus.security.UnauthorizedException;
 import io.quarkus.security.identity.SecurityIdentity;
 import io.quarkus.security.runtime.QuarkusSecurityIdentity;
 import jakarta.annotation.Priority;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.ext.Provider;
@@ -17,6 +19,7 @@ import sk.janobono.simple.business.service.UserService;
 import sk.janobono.simple.common.component.JwtToken;
 import sk.janobono.simple.common.config.SecurityConfigProperties;
 
+@ApplicationScoped
 @Provider
 @Priority(1)
 public class JwtAuthenticationFilter implements ContainerRequestFilter {
