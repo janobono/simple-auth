@@ -3,3 +3,7 @@
 *.iws
 *.iml
 *.ipr
+
+# OSX
+.DS_Store
+._*
