@@ -2,6 +2,9 @@ package sk.janobono.simple.business.service;
 
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -16,10 +19,6 @@ import sk.janobono.simple.business.model.mail.MailContentData;
 import sk.janobono.simple.business.model.mail.MailData;
 import sk.janobono.simple.business.model.mail.MailLinkData;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
-
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -33,8 +32,8 @@ public class MailService {
         try {
             final MimeMessagePreparator mimeMessagePreparator = mimeMessage -> {
                 final MimeMessageHelper messageHelper = new MimeMessageHelper(
-                        mimeMessage,
-                        Optional.ofNullable(mailData.attachments()).map(att -> !att.isEmpty()).orElse(false)
+                    mimeMessage,
+                    Optional.ofNullable(mailData.attachments()).map(att -> !att.isEmpty()).orElse(false)
                 );
 
                 messageHelper.setFrom(mailData.from());
@@ -63,25 +62,25 @@ public class MailService {
                 messageHelper.setText(format(mailData.content()), true);
 
                 Optional.ofNullable(mailData.attachments())
-                        .map(Map::entrySet).stream()
-                        .flatMap(Collection::stream)
-                        .forEach(attachment -> {
-                            try {
-                                messageHelper.addAttachment(attachment.getKey(), attachment.getValue());
-                            } catch (final MessagingException e) {
-                                throw new RuntimeException(e);
-                            }
-                        });
+                    .map(Map::entrySet).stream()
+                    .flatMap(Collection::stream)
+                    .forEach(attachment -> {
+                        try {
+                            messageHelper.addAttachment(attachment.getKey(), attachment.getValue());
+                        } catch (final MessagingException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
             };
             javaMailSender.send(mimeMessagePreparator);
         } finally {
             Optional.ofNullable(mailData.attachments()).map(Map::values).stream().flatMap(Collection::stream)
-                    .forEach(attachment -> {
-                        final boolean deleted = attachment.delete();
-                        if (!deleted) {
-                            log.warn("Attachment not deleted {}", attachment);
-                        }
-                    });
+                .forEach(attachment -> {
+                    final boolean deleted = attachment.delete();
+                    if (!deleted) {
+                        log.warn("Attachment not deleted {}", attachment);
+                    }
+                });
         }
     }
 

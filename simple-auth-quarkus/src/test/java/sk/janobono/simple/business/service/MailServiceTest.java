@@ -2,6 +2,10 @@ package sk.janobono.simple.business.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import io.quarkus.mailer.Mail;
+import io.quarkus.mailer.Mailer;
+import io.quarkus.test.junit.QuarkusTest;
+import jakarta.inject.Inject;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,24 +18,20 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.context.support.StaticApplicationContext;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessagePreparator;
-import org.thymeleaf.spring6.SpringTemplateEngine;
-import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
-import org.thymeleaf.templatemode.TemplateMode;
 import sk.janobono.simple.business.model.mail.MailContentData;
 import sk.janobono.simple.business.model.mail.MailData;
 import sk.janobono.simple.business.model.mail.MailLinkData;
 
+@QuarkusTest
 class MailServiceTest {
 
+    @Inject
+    public MailService mailService;
+
     @Mock
-    private JavaMailSender javaMailSender;
+    private Mailer mailer;
 
-    private MailService mailService;
-
-    private AtomicReference<MimeMessagePreparator> sendResult;
+    private AtomicReference<Mail> sendResult;
 
     @BeforeEach
     void setUp() {
@@ -41,19 +41,9 @@ class MailServiceTest {
         Mockito.doAnswer(answer -> {
             sendResult.set(answer.getArgument(0));
             return null;
-        }).when(javaMailSender).send(Mockito.any(MimeMessagePreparator.class));
+        }).when(mailer).send(Mockito.any(Mail.class));
 
-        final SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
-        templateResolver.setApplicationContext(new StaticApplicationContext());
-        templateResolver.setPrefix("classpath:/templates/");
-        templateResolver.setSuffix(".html");
-        templateResolver.setTemplateMode(TemplateMode.HTML);
-
-        final SpringTemplateEngine templateEngine = new SpringTemplateEngine();
-        templateEngine.setEnableSpringELCompiler(true);
-        templateEngine.setTemplateResolver(templateResolver);
-
-        mailService = new MailService(javaMailSender, templateEngine);
+        mailService.setMailer(mailer);
     }
 
     @Test

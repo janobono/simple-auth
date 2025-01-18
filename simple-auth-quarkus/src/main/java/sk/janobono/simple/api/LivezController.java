@@ -8,7 +8,7 @@ public class LivezController implements LivezApi {
     @Override
     public Response livez() {
         return Response.status(Response.Status.OK)
-                .entity(HealthStatus.builder().status("OK").build())
-                .build();
+            .entity(HealthStatus.builder().status("OK").build())
+            .build();
     }
 }

@@ -9,9 +9,10 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties("app.common")
 @Validated
 public record CommonConfigProperties(
-        @DefaultValue("4") @Min(4) Integer captchaLength,
-        @NotEmpty String confirmPath,
-        @NotEmpty String mail,
-        @NotEmpty String webUrl
+    @DefaultValue("4") @Min(4) Integer captchaLength,
+    @NotEmpty String confirmPath,
+    @NotEmpty String mail,
+    @NotEmpty String webUrl
 ) {
+
 }

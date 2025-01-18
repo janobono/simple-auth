@@ -1,13 +1,12 @@
 package sk.janobono.simple.common.component;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import sk.janobono.simple.common.config.VerificationConfigProperties;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import sk.janobono.simple.common.config.VerificationConfigProperties;
 
 class VerificationTokenTest {
 
@@ -19,16 +18,16 @@ class VerificationTokenTest {
 
         // Then
         Assertions.assertThrows(
-                RuntimeException.class,
-                () -> verificationToken.generateToken(null, null, null)
+            RuntimeException.class,
+            () -> verificationToken.generateToken(null, null, null)
         );
         Assertions.assertThrows(
-                RuntimeException.class,
-                () -> verificationToken.generateToken(Map.of(), null, null)
+            RuntimeException.class,
+            () -> verificationToken.generateToken(Map.of(), null, null)
         );
         Assertions.assertThrows(
-                RuntimeException.class,
-                () -> verificationToken.generateToken(Map.of(), 0L, null)
+            RuntimeException.class,
+            () -> verificationToken.generateToken(Map.of(), 0L, null)
         );
     }
 
@@ -45,7 +44,6 @@ class VerificationTokenTest {
         assertThat(token).isNotBlank();
     }
 
-
     @Test
     void parseToken_whenExpiredToken_thenResult() {
         // Given
@@ -55,8 +53,8 @@ class VerificationTokenTest {
 
         // Then
         Assertions.assertThrows(
-                RuntimeException.class,
-                () -> verificationToken.parseToken(token)
+            RuntimeException.class,
+            () -> verificationToken.parseToken(token)
         );
     }
 

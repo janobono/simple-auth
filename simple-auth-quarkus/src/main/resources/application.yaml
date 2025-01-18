@@ -16,6 +16,9 @@ quarkus:
   log:
     category:
       "sk.janobono.simple": ${LOG_LEVEL:DEBUG}
+  mailer:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:1025}
 
 # ===============================
 # = APP

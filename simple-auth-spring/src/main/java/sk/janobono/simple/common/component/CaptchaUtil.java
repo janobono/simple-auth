@@ -1,17 +1,19 @@
 package sk.janobono.simple.common.component;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.util.Optional;
+import java.util.Random;
+import javax.imageio.ImageIO;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import sk.janobono.simple.common.config.CommonConfigProperties;
 import sk.janobono.simple.common.exception.SimpleAuthServiceException;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.util.Optional;
-import java.util.Random;
 
 @Component
 public class CaptchaUtil {
@@ -68,9 +70,9 @@ public class CaptchaUtil {
 
     public String generateToken(final String text) {
         return Optional.ofNullable(text)
-                .filter(s -> !s.isBlank())
-                .map(tokenEncoder::encode)
-                .orElse(null);
+            .filter(s -> !s.isBlank())
+            .map(tokenEncoder::encode)
+            .orElse(null);
     }
 
     public boolean isTokenValid(final String text, final String token) {

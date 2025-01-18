@@ -1,11 +1,11 @@
 package sk.janobono.simple.common.component;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import sk.janobono.simple.common.config.CommonConfigProperties;
 import sk.janobono.simple.common.exception.ApplicationException;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class CaptchaUtilTest {
 
@@ -13,10 +13,10 @@ class CaptchaUtilTest {
     void generateCaptcha_whenNullInput_thenNullResult() {
         // Given
         final CommonConfigProperties commonConfigProperties = new CommonConfigProperties(
-                8,
-                "/confirm",
-                "simple@auth.org",
-                "test@test.sk"
+            8,
+            "/confirm",
+            "simple@auth.org",
+            "test@test.sk"
         );
         final CaptchaUtil captchaUtil = new CaptchaUtil(commonConfigProperties);
 
@@ -33,10 +33,10 @@ class CaptchaUtilTest {
     void generateCaptcha_whenValidInput_thenValidResult() {
         // Given
         final CommonConfigProperties commonConfigProperties = new CommonConfigProperties(
-                8,
-                "/confirm",
-                "simple@auth.org",
-                "test@test.sk"
+            8,
+            "/confirm",
+            "simple@auth.org",
+            "test@test.sk"
         );
         final CaptchaUtil captchaUtil = new CaptchaUtil(commonConfigProperties);
 
@@ -57,10 +57,10 @@ class CaptchaUtilTest {
     void generateCaptcha_whenInvalidInput_thenExceptionThrown() {
         // Given
         final CommonConfigProperties commonConfigProperties = new CommonConfigProperties(
-                8,
-                "/confirm",
-                "simple@auth.org",
-                "test@test.sk"
+            8,
+            "/confirm",
+            "simple@auth.org",
+            "test@test.sk"
         );
         final CaptchaUtil captchaUtil = new CaptchaUtil(commonConfigProperties);
 
@@ -70,8 +70,8 @@ class CaptchaUtilTest {
 
         // Then
         Assertions.assertThrows(
-                ApplicationException.class,
-                () -> captchaUtil.checkTokenValid("xyz", token)
+            ApplicationException.class,
+            () -> captchaUtil.checkTokenValid("xyz", token)
         );
     }
 }

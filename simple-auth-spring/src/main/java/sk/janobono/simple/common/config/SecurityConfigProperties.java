@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties("app.security")
 @Validated
 public record SecurityConfigProperties(
-        @NotBlank String publicPathPatternRegex
+    @NotBlank String publicPathPatternRegex
 ) {
+
 }

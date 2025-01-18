@@ -1,8 +1,7 @@
 package sk.janobono.simple.common.exception;
 
-import sk.janobono.simple.api.model.ErrorCode;
-
 import java.text.MessageFormat;
+import sk.janobono.simple.api.model.ErrorCode;
 
 public enum SimpleAuthServiceException {
 

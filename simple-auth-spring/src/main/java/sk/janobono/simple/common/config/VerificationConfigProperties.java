@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties("app.verification")
 @Validated
 public record VerificationConfigProperties(
-        @NotEmpty String issuer
+    @NotEmpty String issuer
 ) {
+
 }

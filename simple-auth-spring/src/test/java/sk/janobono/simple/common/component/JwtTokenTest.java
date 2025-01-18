@@ -1,13 +1,12 @@
 package sk.janobono.simple.common.component;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import sk.janobono.simple.api.model.Authority;
 import sk.janobono.simple.common.config.JwtConfigProperties;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class JwtTokenTest {
 
@@ -19,16 +18,16 @@ class JwtTokenTest {
 
         // Then
         Assertions.assertThrows(
-                RuntimeException.class,
-                () -> jwtToken.generateToken(null, null)
+            RuntimeException.class,
+            () -> jwtToken.generateToken(null, null)
         );
         Assertions.assertThrows(
-                RuntimeException.class,
-                () -> jwtToken.generateToken(new JwtToken.JwtContent(null, null), null)
+            RuntimeException.class,
+            () -> jwtToken.generateToken(new JwtToken.JwtContent(null, null), null)
         );
         Assertions.assertThrows(
-                RuntimeException.class,
-                () -> jwtToken.generateToken(new JwtToken.JwtContent(1L, null), null)
+            RuntimeException.class,
+            () -> jwtToken.generateToken(new JwtToken.JwtContent(1L, null), null)
         );
     }
 
@@ -56,8 +55,8 @@ class JwtTokenTest {
 
         // Then
         Assertions.assertThrows(
-                RuntimeException.class,
-                () -> jwtToken.parseToken(token)
+            RuntimeException.class,
+            () -> jwtToken.parseToken(token)
         );
     }
 
@@ -66,7 +65,8 @@ class JwtTokenTest {
         // Given
         final JwtConfigProperties jwtConfigProperties = new JwtConfigProperties("test", 1);
         final JwtToken jwtToken = new JwtToken(jwtConfigProperties);
-        final String token = jwtToken.generateToken(new JwtToken.JwtContent(1L, List.of(Authority.ADMIN, Authority.MANAGER)), System.currentTimeMillis());
+        final String token = jwtToken.generateToken(new JwtToken.JwtContent(1L, List.of(Authority.ADMIN, Authority.MANAGER)),
+            System.currentTimeMillis());
 
         // Then
         final JwtToken.JwtContent content = jwtToken.parseToken(token);

@@ -1,15 +1,21 @@
 package sk.janobono.simple.api;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.testcontainers.shaded.com.google.common.net.HttpHeaders;
 import sk.janobono.simple.BaseTest;
-import sk.janobono.simple.api.model.*;
+import sk.janobono.simple.api.model.AuthenticationResponse;
+import sk.janobono.simple.api.model.ChangeEmail;
+import sk.janobono.simple.api.model.ChangePassword;
+import sk.janobono.simple.api.model.ChangeUserDetails;
+import sk.janobono.simple.api.model.Confirmation;
+import sk.janobono.simple.api.model.ResetPassword;
+import sk.janobono.simple.api.model.SignUp;
 import sk.janobono.simple.business.model.mail.MailData;
 import sk.janobono.simple.common.component.CaptchaUtil;
 import sk.janobono.simple.common.config.CommonConfigProperties;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class AuthControllerTest extends BaseTest {
 
@@ -47,16 +53,16 @@ class AuthControllerTest extends BaseTest {
         final String captchaToken = captchaUtil.generateToken(captchaText);
 
         restClient.post()
-                .uri(getURI("/auth/sign-up"))
-                .body(new SignUp(
-                        EMAIL,
-                        PASSWORD,
-                        FIRST_NAME,
-                        LAST_NAME,
-                        captchaText,
-                        captchaToken
-                ))
-                .retrieve();
+            .uri(getURI("/auth/sign-up"))
+            .body(new SignUp(
+                EMAIL,
+                PASSWORD,
+                FIRST_NAME,
+                LAST_NAME,
+                captchaText,
+                captchaToken
+            ))
+            .retrieve();
 
         final MailData mailData = testMail.getMail();
         assertThat(mailData).isNotNull();
@@ -68,10 +74,10 @@ class AuthControllerTest extends BaseTest {
 
     private void confirm(final String token) {
         restClient.post()
-                .uri(getURI("/auth/confirm"))
-                .body(new Confirmation(token))
-                .retrieve()
-                .body(AuthenticationResponse.class);
+            .uri(getURI("/auth/confirm"))
+            .body(new Confirmation(token))
+            .retrieve()
+            .body(AuthenticationResponse.class);
     }
 
     private AuthenticationResponse changeEmail(final AuthenticationResponse authenticationResponse) {
@@ -79,17 +85,17 @@ class AuthControllerTest extends BaseTest {
         final String captchaToken = captchaUtil.generateToken(captchaText);
 
         restClient.post()
-                .uri(getURI("/auth/change-email"))
-                .header(HttpHeaders.AUTHORIZATION, "%s %s".formatted(authenticationResponse.getType(), authenticationResponse.getToken()))
-                .body(new ChangeEmail("a" + EMAIL, PASSWORD, captchaText, captchaToken))
-                .retrieve();
+            .uri(getURI("/auth/change-email"))
+            .header(HttpHeaders.AUTHORIZATION, "%s %s".formatted(authenticationResponse.getType(), authenticationResponse.getToken()))
+            .body(new ChangeEmail("a" + EMAIL, PASSWORD, captchaText, captchaToken))
+            .retrieve();
 
         return restClient.post()
-                .uri(getURI("/auth/change-email"))
-                .header(HttpHeaders.AUTHORIZATION, "%s %s".formatted(authenticationResponse.getType(), authenticationResponse.getToken()))
-                .body(new ChangeEmail(EMAIL, PASSWORD, captchaText, captchaToken))
-                .retrieve()
-                .body(AuthenticationResponse.class);
+            .uri(getURI("/auth/change-email"))
+            .header(HttpHeaders.AUTHORIZATION, "%s %s".formatted(authenticationResponse.getType(), authenticationResponse.getToken()))
+            .body(new ChangeEmail(EMAIL, PASSWORD, captchaText, captchaToken))
+            .retrieve()
+            .body(AuthenticationResponse.class);
     }
 
     private AuthenticationResponse changePassword(final AuthenticationResponse authenticationResponse) {
@@ -97,17 +103,17 @@ class AuthControllerTest extends BaseTest {
         final String captchaToken = captchaUtil.generateToken(captchaText);
 
         restClient.post()
-                .uri(getURI("/auth/change-password"))
-                .header(HttpHeaders.AUTHORIZATION, "%s %s".formatted(authenticationResponse.getType(), authenticationResponse.getToken()))
-                .body(new ChangePassword(PASSWORD, NEW_PASSWORD, captchaText, captchaToken))
-                .retrieve();
+            .uri(getURI("/auth/change-password"))
+            .header(HttpHeaders.AUTHORIZATION, "%s %s".formatted(authenticationResponse.getType(), authenticationResponse.getToken()))
+            .body(new ChangePassword(PASSWORD, NEW_PASSWORD, captchaText, captchaToken))
+            .retrieve();
 
         return restClient.post()
-                .uri(getURI("/auth/change-password"))
-                .header(HttpHeaders.AUTHORIZATION, "%s %s".formatted(authenticationResponse.getType(), authenticationResponse.getToken()))
-                .body(new ChangePassword(NEW_PASSWORD, PASSWORD, captchaText, captchaToken))
-                .retrieve()
-                .body(AuthenticationResponse.class);
+            .uri(getURI("/auth/change-password"))
+            .header(HttpHeaders.AUTHORIZATION, "%s %s".formatted(authenticationResponse.getType(), authenticationResponse.getToken()))
+            .body(new ChangePassword(NEW_PASSWORD, PASSWORD, captchaText, captchaToken))
+            .retrieve()
+            .body(AuthenticationResponse.class);
     }
 
     private void changeUserDetails(final AuthenticationResponse authenticationResponse) {
@@ -115,16 +121,16 @@ class AuthControllerTest extends BaseTest {
         final String captchaToken = captchaUtil.generateToken(captchaText);
 
         restClient.post()
-                .uri(getURI("/auth/change-user-details"))
-                .header(HttpHeaders.AUTHORIZATION, "%s %s".formatted(authenticationResponse.getType(), authenticationResponse.getToken()))
-                .body(new ChangeUserDetails(
-                        FIRST_NAME,
-                        LAST_NAME,
-                        captchaText,
-                        captchaToken
-                ))
-                .retrieve()
-                .body(AuthenticationResponse.class);
+            .uri(getURI("/auth/change-user-details"))
+            .header(HttpHeaders.AUTHORIZATION, "%s %s".formatted(authenticationResponse.getType(), authenticationResponse.getToken()))
+            .body(new ChangeUserDetails(
+                FIRST_NAME,
+                LAST_NAME,
+                captchaText,
+                captchaToken
+            ))
+            .retrieve()
+            .body(AuthenticationResponse.class);
     }
 
     private String[] resetPassword() {
@@ -132,9 +138,9 @@ class AuthControllerTest extends BaseTest {
         final String captchaToken = captchaUtil.generateToken(captchaText);
 
         restClient.post()
-                .uri(getURI("/auth/reset-password"))
-                .body(new ResetPassword(EMAIL, captchaText, captchaToken))
-                .retrieve();
+            .uri(getURI("/auth/reset-password"))
+            .body(new ResetPassword(EMAIL, captchaText, captchaToken))
+            .retrieve();
 
         final MailData mailData = testMail.getMail();
         assertThat(mailData).isNotNull();

@@ -8,7 +8,7 @@ public class ReadyzController implements ReadyzApi {
     @Override
     public Response readyz() {
         return Response.status(Response.Status.OK)
-                .entity(HealthStatus.builder().status("OK").build())
-                .build();
+            .entity(HealthStatus.builder().status("OK").build())
+            .build();
     }
 }

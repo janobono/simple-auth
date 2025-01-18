@@ -1,11 +1,10 @@
 package sk.janobono.simple.business.service;
 
+import java.util.Base64;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import sk.janobono.simple.api.model.Captcha;
 import sk.janobono.simple.common.component.CaptchaUtil;
-
-import java.util.Base64;
 
 @RequiredArgsConstructor
 @Service

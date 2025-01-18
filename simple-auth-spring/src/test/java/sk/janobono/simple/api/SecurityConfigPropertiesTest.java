@@ -1,15 +1,14 @@
 package sk.janobono.simple.api;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.net.URI;
+import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import sk.janobono.simple.BaseTest;
-
-import java.net.URI;
-import java.util.concurrent.atomic.AtomicReference;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class SecurityConfigPropertiesTest extends BaseTest {
 
@@ -38,16 +37,15 @@ class SecurityConfigPropertiesTest extends BaseTest {
     private <T> HttpStatusCode getStatus(final URI uri, final Class<T> bodyType) {
         final AtomicReference<HttpStatusCode> status = new AtomicReference<>();
         final ResponseEntity<T> responseEntity = restClient.get()
-                .uri(uri)
-                .retrieve()
-                .onStatus(HttpStatusCode::isError, ((request, response) -> {
-                    status.set(response.getStatusCode());
-                }))
-                .toEntity(bodyType);
+            .uri(uri)
+            .retrieve()
+            .onStatus(HttpStatusCode::isError, ((request, response) -> {
+                status.set(response.getStatusCode());
+            }))
+            .toEntity(bodyType);
         if (status.get() != null) {
             return status.get();
         }
         return responseEntity.getStatusCode();
     }
-
 }

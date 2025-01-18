@@ -8,7 +8,8 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties("app.jwt")
 @Validated
 public record JwtConfigProperties(
-        @NotEmpty String issuer,
-        @NotNull Integer expiration
+    @NotEmpty String issuer,
+    @NotNull Integer expiration
 ) {
+
 }

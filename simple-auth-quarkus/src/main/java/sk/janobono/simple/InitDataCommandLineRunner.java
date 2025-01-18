@@ -25,7 +25,7 @@ public class InitDataCommandLineRunner {
     UserRepository userRepository;
 
     @Transactional
-    public void onStart(@Observes StartupEvent ev) {
+    public void onStart(@Observes final StartupEvent ev) {
         initAuthorities();
         initUsers();
     }

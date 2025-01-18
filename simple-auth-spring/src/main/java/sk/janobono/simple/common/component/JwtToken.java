@@ -6,10 +6,6 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import org.springframework.stereotype.Component;
-import sk.janobono.simple.api.model.Authority;
-import sk.janobono.simple.common.config.JwtConfigProperties;
-
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -20,17 +16,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import org.springframework.stereotype.Component;
+import sk.janobono.simple.api.model.Authority;
+import sk.janobono.simple.common.config.JwtConfigProperties;
 
 @Component
 public class JwtToken {
 
-    public record JwtContent(Long id, List<Authority> authorities) {
-    }
-
     private final Algorithm algorithm;
     private final Long expiration;
     private final String issuer;
-
     public JwtToken(final JwtConfigProperties jwtConfigProperties) {
         final KeyPairGenerator keyGen;
         try {
@@ -48,15 +43,15 @@ public class JwtToken {
     public String generateToken(final JwtContent jwtContent, final Long issuedAt) {
         try {
             final JWTCreator.Builder jwtBuilder = JWT.create()
-                    .withIssuer(issuer)
-                    .withIssuedAt(new Date(issuedAt))
-                    .withExpiresAt(new Date(expiresAt(issuedAt)));
+                .withIssuer(issuer)
+                .withIssuedAt(new Date(issuedAt))
+                .withExpiresAt(new Date(expiresAt(issuedAt)));
             jwtBuilder.withSubject(Long.toString(jwtContent.id()));
             jwtBuilder.withAudience(
-                    Optional.ofNullable(jwtContent.authorities()).stream()
-                            .flatMap(Collection::stream)
-                            .map(Authority::getValue)
-                            .toArray(String[]::new)
+                Optional.ofNullable(jwtContent.authorities()).stream()
+                    .flatMap(Collection::stream)
+                    .map(Authority::getValue)
+                    .toArray(String[]::new)
             );
             return jwtBuilder.sign(algorithm);
         } catch (final Exception e) {
@@ -67,11 +62,11 @@ public class JwtToken {
     public JwtContent parseToken(final String token) {
         final DecodedJWT jwt = decodeToken(token);
         return new JwtContent(
-                Long.parseLong(jwt.getSubject()),
-                Optional.ofNullable(jwt.getAudience()).stream()
-                        .flatMap(Collection::stream)
-                        .map(Authority::fromValue)
-                        .toList()
+            Long.parseLong(jwt.getSubject()),
+            Optional.ofNullable(jwt.getAudience()).stream()
+                .flatMap(Collection::stream)
+                .map(Authority::fromValue)
+                .toList()
         );
     }
 
@@ -81,8 +76,12 @@ public class JwtToken {
 
     private DecodedJWT decodeToken(final String token) throws JWTVerificationException {
         final JWTVerifier verifier = JWT.require(algorithm)
-                .withIssuer(issuer)
-                .build();
+            .withIssuer(issuer)
+            .build();
         return verifier.verify(token);
+    }
+
+    public record JwtContent(Long id, List<Authority> authorities) {
+
     }
 }

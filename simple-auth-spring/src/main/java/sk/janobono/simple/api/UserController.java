@@ -1,14 +1,18 @@
 package sk.janobono.simple.api;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
-import sk.janobono.simple.api.model.*;
+import sk.janobono.simple.api.model.Authority;
+import sk.janobono.simple.api.model.BooleanValue;
+import sk.janobono.simple.api.model.PageUser;
+import sk.janobono.simple.api.model.User;
+import sk.janobono.simple.api.model.UserCreate;
+import sk.janobono.simple.api.model.UserProfile;
 import sk.janobono.simple.business.model.UserSearchCriteriaData;
 import sk.janobono.simple.business.service.UserService;
 import sk.janobono.simple.common.component.PageableUtil;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -38,18 +42,18 @@ public class UserController implements UsersApi {
     @PreAuthorize("hasAnyAuthority('admin', 'manager', 'employee')")
     @Override
     public PageUser getUsers(
-            final Integer page,
-            final Integer size,
-            final String sort,
-            final String searchField,
-            final String email
+        final Integer page,
+        final Integer size,
+        final String sort,
+        final String searchField,
+        final String email
     ) {
         return userService.getUsers(
-                UserSearchCriteriaData.builder()
-                        .searchField(searchField)
-                        .email(email)
-                        .build(),
-                pageableUtil.toPageable(page, size, sort, "username", true)
+            UserSearchCriteriaData.builder()
+                .searchField(searchField)
+                .email(email)
+                .build(),
+            pageableUtil.toPageable(page, size, sort, "username", true)
         );
     }
 

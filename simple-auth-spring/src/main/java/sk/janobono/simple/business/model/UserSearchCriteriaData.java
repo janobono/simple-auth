@@ -4,7 +4,8 @@ import lombok.Builder;
 
 @Builder
 public record UserSearchCriteriaData(
-        String searchField,
-        String email
+    String searchField,
+    String email
 ) {
+
 }

@@ -1,5 +1,6 @@
 package sk.janobono.simple.common.security;
 
+import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,8 +24,6 @@ import sk.janobono.simple.common.component.JwtToken;
 import sk.janobono.simple.common.config.CorsConfigProperties;
 import sk.janobono.simple.common.config.SecurityConfigProperties;
 
-import java.util.regex.Pattern;
-
 @RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
@@ -43,26 +42,26 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(final HttpSecurity httpSecurity, final UserService userService) throws Exception {
         httpSecurity
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(configurationSource()))
-                .sessionManagement(sessionManagement ->
-                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                .authorizeHttpRequests(authorizeHttpRequests ->
-                        authorizeHttpRequests
-                                .requestMatchers(permitAllRequestMatcher()).permitAll()
-                                .anyRequest().authenticated()
-                )
-                .exceptionHandling(exceptionHandling ->
-                        exceptionHandling
-                                .authenticationEntryPoint(jwtAuthenticationEntryPoint())
-                )
-                .addFilterBefore(jwtAuthenticationFilter(userService), UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(exceptionHandling ->
-                        exceptionHandling
-                                .accessDeniedHandler(accessDeniedHandler())
-                                .authenticationEntryPoint(authenticationEntryPoint())
-                );
+            .csrf(AbstractHttpConfigurer::disable)
+            .cors(cors -> cors.configurationSource(configurationSource()))
+            .sessionManagement(sessionManagement ->
+                sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            .authorizeHttpRequests(authorizeHttpRequests ->
+                authorizeHttpRequests
+                    .requestMatchers(permitAllRequestMatcher()).permitAll()
+                    .anyRequest().authenticated()
+            )
+            .exceptionHandling(exceptionHandling ->
+                exceptionHandling
+                    .authenticationEntryPoint(jwtAuthenticationEntryPoint())
+            )
+            .addFilterBefore(jwtAuthenticationFilter(userService), UsernamePasswordAuthenticationFilter.class)
+            .exceptionHandling(exceptionHandling ->
+                exceptionHandling
+                    .accessDeniedHandler(accessDeniedHandler())
+                    .authenticationEntryPoint(authenticationEntryPoint())
+            );
 
         return httpSecurity.build();
     }

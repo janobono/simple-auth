@@ -7,7 +7,8 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties("app.auth")
 @Validated
 public record AuthConfigProperties(
-        @NotNull Integer signUpTokenExpiration,
-        @NotNull Integer resetPasswordTokenExpiration
+    @NotNull Integer signUpTokenExpiration,
+    @NotNull Integer resetPasswordTokenExpiration
 ) {
+
 }

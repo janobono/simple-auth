@@ -1,6 +1,11 @@
 package sk.janobono.simple;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,26 +27,20 @@ import sk.janobono.simple.business.service.MailService;
 import sk.janobono.simple.dal.repository.AuthorityRepository;
 import sk.janobono.simple.dal.repository.UserRepository;
 
-import java.net.URI;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 @SpringBootTest(
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = {
-                "spring.sql.init.mode=always",
-                "spring.sql.init.schema-locations=file:../db/init.sql"
-        }
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+    properties = {
+        "spring.sql.init.mode=always",
+        "spring.sql.init.schema-locations=file:../db/init.sql"
+    }
 )
 public abstract class BaseTest {
 
     public static final PostgreSQLContainer<?> postgresDB = new PostgreSQLContainer<>
-            ("postgres:alpine")
-            .withDatabaseName("app")
-            .withUsername("app")
-            .withPassword("app");
+        ("postgres:alpine")
+        .withDatabaseName("app")
+        .withUsername("app")
+        .withPassword("app");
 
     static {
         postgresDB.start();
@@ -77,26 +76,26 @@ public abstract class BaseTest {
 
     public AuthenticationResponse signIn(final String username, final String password) {
         return restClient
-                .post()
-                .uri(getURI("/auth/sign-in"))
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(new SignIn(username, password))
-                .retrieve().body(AuthenticationResponse.class);
+            .post()
+            .uri(getURI("/auth/sign-in"))
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(new SignIn(username, password))
+            .retrieve().body(AuthenticationResponse.class);
     }
 
     public URI getURI(final String path) {
         return UriComponentsBuilder.fromHttpUrl("http://localhost:" + serverPort)
-                .path("/api" + path).build().toUri();
+            .path("/api" + path).build().toUri();
     }
 
     public URI getURI(final String path, final Map<String, String> pathVars) {
         return UriComponentsBuilder.fromHttpUrl("http://localhost:" + serverPort)
-                .path("/api" + path).buildAndExpand(pathVars).toUri();
+            .path("/api" + path).buildAndExpand(pathVars).toUri();
     }
 
     public URI getURI(final String path, final MultiValueMap<String, String> queryParams) {
         return UriComponentsBuilder.fromHttpUrl("http://localhost:" + serverPort)
-                .path("/api" + path).queryParams(queryParams).build().toUri();
+            .path("/api" + path).queryParams(queryParams).build().toUri();
     }
 
     public void addToParams(final MultiValueMap<String, String> params, final String key, final String value) {

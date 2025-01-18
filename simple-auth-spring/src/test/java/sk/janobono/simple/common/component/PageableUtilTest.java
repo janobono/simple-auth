@@ -1,5 +1,7 @@
 package sk.janobono.simple.common.component;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,11 +10,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(
-        classes = {PageableUtil.class}
+    classes = {PageableUtil.class}
 )
 class PageableUtilTest {
 
@@ -22,8 +22,8 @@ class PageableUtilTest {
     @Test
     void toPageable_whenNullInput_thenExceptionThrown() {
         Assertions.assertThrows(
-                IllegalArgumentException.class,
-                () -> pageableUtil.toPageable(null, null, null, null, false)
+            IllegalArgumentException.class,
+            () -> pageableUtil.toPageable(null, null, null, null, false)
         );
     }
 

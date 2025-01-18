@@ -1,5 +1,6 @@
 package sk.janobono.simple;
 
+import java.util.concurrent.Executor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
@@ -8,11 +9,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import java.util.concurrent.Executor;
-
 @SpringBootApplication(
-        exclude = {UserDetailsServiceAutoConfiguration.class},
-        scanBasePackages = {"sk.janobono.simple"}
+    exclude = {UserDetailsServiceAutoConfiguration.class},
+    scanBasePackages = {"sk.janobono.simple"}
 )
 @EnableAsync
 @ConfigurationPropertiesScan(basePackages = {"sk.janobono.simple"})

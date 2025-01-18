@@ -12,7 +12,7 @@ public class CaptchaController implements CaptchaApi {
     @Override
     public Response getCaptcha() {
         return Response.status(Response.Status.OK)
-                .entity(captchaService.getCaptcha())
-                .build();
+            .entity(captchaService.getCaptcha())
+            .build();
     }
 }

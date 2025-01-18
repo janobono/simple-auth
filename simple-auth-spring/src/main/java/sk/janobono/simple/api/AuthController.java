@@ -2,7 +2,15 @@ package sk.janobono.simple.api;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RestController;
-import sk.janobono.simple.api.model.*;
+import sk.janobono.simple.api.model.AuthenticationResponse;
+import sk.janobono.simple.api.model.ChangeEmail;
+import sk.janobono.simple.api.model.ChangePassword;
+import sk.janobono.simple.api.model.ChangeUserDetails;
+import sk.janobono.simple.api.model.Confirmation;
+import sk.janobono.simple.api.model.ResetPassword;
+import sk.janobono.simple.api.model.SignIn;
+import sk.janobono.simple.api.model.SignUp;
+import sk.janobono.simple.api.model.User;
 import sk.janobono.simple.business.service.AuthService;
 
 @RequiredArgsConstructor

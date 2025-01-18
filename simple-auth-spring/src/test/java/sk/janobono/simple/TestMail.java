@@ -1,10 +1,9 @@
 package sk.janobono.simple;
 
+import java.util.concurrent.atomic.AtomicReference;
 import org.mockito.Mockito;
 import sk.janobono.simple.business.model.mail.MailData;
 import sk.janobono.simple.business.service.MailService;
-
-import java.util.concurrent.atomic.AtomicReference;
 
 public class TestMail {
 
@@ -13,11 +12,11 @@ public class TestMail {
     public void mock(final MailService mailService) {
         mail.set(null);
         Mockito.doAnswer(answer -> {
-                    final MailData data = answer.getArgument(0);
-                    mail.set(data);
-                    return null;
-                })
-                .when(mailService).sendEmail(Mockito.any(MailData.class));
+                final MailData data = answer.getArgument(0);
+                mail.set(data);
+                return null;
+            })
+            .when(mailService).sendEmail(Mockito.any(MailData.class));
     }
 
     public MailData getMail() {

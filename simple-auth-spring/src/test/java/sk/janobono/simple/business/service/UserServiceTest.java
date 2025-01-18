@@ -1,5 +1,8 @@
 package sk.janobono.simple.business.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +13,6 @@ import sk.janobono.simple.api.model.User;
 import sk.janobono.simple.api.model.UserCreate;
 import sk.janobono.simple.common.config.CommonConfigProperties;
 import sk.janobono.simple.common.exception.ApplicationException;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class UserServiceTest extends BaseTest {
 
@@ -33,13 +32,13 @@ class UserServiceTest extends BaseTest {
         initDataCommandLineRunner.run();
 
         final UserCreate userCreate = UserCreate.builder()
-                .email(commonConfigProperties.mail())
-                .build();
+            .email(commonConfigProperties.mail())
+            .build();
 
         // THEN
         Assertions.assertThrows(
-                ApplicationException.class,
-                () -> userService.addUser(userCreate)
+            ApplicationException.class,
+            () -> userService.addUser(userCreate)
         );
     }
 
@@ -47,13 +46,13 @@ class UserServiceTest extends BaseTest {
     void addUser_whenValidInput_thenResult() {
         // GIVEN
         final UserCreate userCreate = UserCreate.builder()
-                .email("test@test.sk")
-                .firstName("first")
-                .lastName("last")
-                .confirmed(true)
-                .enabled(true)
-                .authorities(List.of(Authority.CUSTOMER))
-                .build();
+            .email("test@test.sk")
+            .firstName("first")
+            .lastName("last")
+            .confirmed(true)
+            .enabled(true)
+            .authorities(List.of(Authority.CUSTOMER))
+            .build();
 
         // WHEN
         final User user = userService.addUser(userCreate);
@@ -86,8 +85,8 @@ class UserServiceTest extends BaseTest {
     @Test
     void deleteUser_whenNotExists_thenException() {
         Assertions.assertThrows(
-                ApplicationException.class,
-                () -> userService.deleteUser(10000L)
+            ApplicationException.class,
+            () -> userService.deleteUser(10000L)
         );
     }
 }

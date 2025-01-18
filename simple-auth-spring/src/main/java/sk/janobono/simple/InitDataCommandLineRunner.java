@@ -37,14 +37,14 @@ public class InitDataCommandLineRunner implements CommandLineRunner {
     private void initUsers() {
         if (userRepository.count() == 0L) {
             userRepository.save(UserDo.builder()
-                    .email(commonConfigProperties.mail())
-                    .password(passwordEncoder.encode("simple"))
-                    .firstName("simple")
-                    .lastName("simple")
-                    .confirmed(true)
-                    .enabled(true)
-                    .authorities(authorityRepository.findAll())
-                    .build());
+                .email(commonConfigProperties.mail())
+                .password(passwordEncoder.encode("simple"))
+                .firstName("simple")
+                .lastName("simple")
+                .confirmed(true)
+                .enabled(true)
+                .authorities(authorityRepository.findAll())
+                .build());
         }
     }
 }
