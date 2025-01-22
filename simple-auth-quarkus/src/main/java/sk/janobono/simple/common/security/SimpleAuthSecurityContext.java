@@ -4,9 +4,13 @@ import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.ws.rs.core.SecurityContext;
 import java.security.Principal;
 
-public record SimpleAuthSecurityContext(
-    SecurityIdentity securityIdentity
-) implements SecurityContext {
+public class SimpleAuthSecurityContext implements SecurityContext {
+
+    private final SecurityIdentity securityIdentity;
+
+    public SimpleAuthSecurityContext(final SecurityIdentity securityIdentity) {
+        this.securityIdentity = securityIdentity;
+    }
 
     @Override
     public Principal getUserPrincipal() {
@@ -15,7 +19,7 @@ public record SimpleAuthSecurityContext(
 
     @Override
     public boolean isUserInRole(final String role) {
-        return securityIdentity.hasRole(role);
+        return securityIdentity.getRoles().contains(role);
     }
 
     @Override

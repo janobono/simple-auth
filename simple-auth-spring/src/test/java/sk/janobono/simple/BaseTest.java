@@ -1,20 +1,17 @@
 package sk.janobono.simple;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.util.MultiValueMap;
@@ -24,8 +21,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import sk.janobono.simple.api.model.AuthenticationResponse;
 import sk.janobono.simple.api.model.SignIn;
 import sk.janobono.simple.business.service.MailService;
-import sk.janobono.simple.dal.repository.AuthorityRepository;
-import sk.janobono.simple.dal.repository.UserRepository;
 
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
@@ -48,14 +43,6 @@ public abstract class BaseTest {
 
     @Value("${local.server.port}")
     public int serverPort;
-    @Autowired
-    public PasswordEncoder passwordEncoder;
-    @Autowired
-    public ObjectMapper objectMapper;
-    @Autowired
-    public AuthorityRepository authorityRepository;
-    @Autowired
-    public UserRepository userRepository;
     public RestClient restClient;
     @MockBean
     public MailService mailService;
@@ -74,12 +61,12 @@ public abstract class BaseTest {
         testMail.mock(mailService);
     }
 
-    public AuthenticationResponse signIn(final String username, final String password) {
+    public AuthenticationResponse signIn(final String email, final String password) {
         return restClient
             .post()
             .uri(getURI("/auth/sign-in"))
             .contentType(MediaType.APPLICATION_JSON)
-            .body(new SignIn(username, password))
+            .body(new SignIn(email, password))
             .retrieve().body(AuthenticationResponse.class);
     }
 

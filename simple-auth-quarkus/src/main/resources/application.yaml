@@ -15,10 +15,13 @@ quarkus:
     root-path: ${CONTEXT_PATH:/api}
   log:
     category:
-      "sk.janobono.simple": ${LOG_LEVEL:DEBUG}
+      "sk.janobono.simple":
+        level: ${LOG_LEVEL:DEBUG}
   mailer:
     host: ${MAIL_HOST:localhost}
     port: ${MAIL_PORT:1025}
+  smallrye-jwt:
+    enabled: false
 
 # ===============================
 # = APP
@@ -45,6 +48,12 @@ app:
     allowed-headers: ${CORS_ALLOWED_HEADERS:Authorization,Content-Type}
     allow-credentials: ${CORS_ALLOW_CREDENTIALS:true}
     exposed-headers: ${CORS_EXPOSED_HEADERS:Authorization}
+
+"%dev":
+  quarkus:
+    hibernate-orm:
+      database:
+        generation: drop-and-create
 
 "%test":
   quarkus:

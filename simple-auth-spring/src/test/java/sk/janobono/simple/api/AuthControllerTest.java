@@ -16,6 +16,7 @@ import sk.janobono.simple.api.model.SignUp;
 import sk.janobono.simple.business.model.mail.MailData;
 import sk.janobono.simple.common.component.CaptchaUtil;
 import sk.janobono.simple.common.config.CommonConfigProperties;
+import sk.janobono.simple.dal.repository.UserRepository;
 
 class AuthControllerTest extends BaseTest {
 
@@ -30,6 +31,9 @@ class AuthControllerTest extends BaseTest {
 
     @Autowired
     public CaptchaUtil captchaUtil;
+
+    @Autowired
+    public UserRepository userRepository;
 
     @Test
     void fullTest() {

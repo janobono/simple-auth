@@ -13,6 +13,7 @@ import sk.janobono.simple.api.model.User;
 import sk.janobono.simple.api.model.UserCreate;
 import sk.janobono.simple.common.config.CommonConfigProperties;
 import sk.janobono.simple.common.exception.ApplicationException;
+import sk.janobono.simple.dal.repository.UserRepository;
 
 class UserServiceTest extends BaseTest {
 
@@ -24,6 +25,9 @@ class UserServiceTest extends BaseTest {
 
     @Autowired
     public UserService userService;
+
+    @Autowired
+    public UserRepository userRepository;
 
     @Test
     void addUser_whenExistingEmail_thenException() {

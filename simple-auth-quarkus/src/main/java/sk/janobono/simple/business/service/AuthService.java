@@ -1,7 +1,6 @@
 package sk.janobono.simple.business.service;
 
 import io.quarkus.elytron.security.common.BcryptUtil;
-import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 import java.net.URLEncoder;
@@ -32,7 +31,7 @@ import sk.janobono.simple.common.component.VerificationToken;
 import sk.janobono.simple.common.config.AuthConfigProperties;
 import sk.janobono.simple.common.config.CommonConfigProperties;
 import sk.janobono.simple.common.exception.SimpleAuthServiceException;
-import sk.janobono.simple.common.security.SimpleAuthPrincipal;
+import sk.janobono.simple.common.security.SimpleAuthPrincipalService;
 import sk.janobono.simple.dal.domain.AuthorityDo;
 import sk.janobono.simple.dal.domain.UserDo;
 import sk.janobono.simple.dal.repository.AuthorityRepository;
@@ -48,10 +47,10 @@ public class AuthService {
     private static final String ID = "ID";
     private static final String NEW_PASSWORD = "NEW_PASSWORD";
 
-    private final SecurityIdentity securityIdentity;
-
     private final AuthConfigProperties authConfigProperties;
     private final CommonConfigProperties commonConfigProperties;
+
+    private final SimpleAuthPrincipalService simpleAuthPrincipalService;
 
     private final CaptchaUtil captchaUtil;
     private final JwtToken jwtToken;
@@ -65,7 +64,7 @@ public class AuthService {
 
     @Transactional
     public AuthenticationResponse changeEmail(final ChangeEmail changeEmail) {
-        final User user = ((SimpleAuthPrincipal) securityIdentity.getPrincipal()).user();
+        final User user = simpleAuthPrincipalService.getSimpleAuthPrincipal().user();
         captchaUtil.checkTokenValid(changeEmail.getCaptchaText(), changeEmail.getCaptchaToken());
         if (userRepository.existsByEmail(scDf.toStripAndLowerCase(changeEmail.getEmail()))) {
             throw SimpleAuthServiceException.USER_EMAIL_IS_USED.exception("Email is used");
@@ -80,7 +79,7 @@ public class AuthService {
 
     @Transactional
     public AuthenticationResponse changePassword(final ChangePassword changePassword) {
-        final User user = ((SimpleAuthPrincipal) securityIdentity.getPrincipal()).user();
+        final User user = simpleAuthPrincipalService.getSimpleAuthPrincipal().user();
         captchaUtil.checkTokenValid(changePassword.getCaptchaText(), changePassword.getCaptchaToken());
         final UserDo userDo = userRepository.getUserDo(user.getId());
         checkEnabled(userDo);
@@ -92,7 +91,7 @@ public class AuthService {
 
     @Transactional
     public AuthenticationResponse changeUserDetails(final ChangeUserDetails changeUserDetails) {
-        final User user = ((SimpleAuthPrincipal) securityIdentity.getPrincipal()).user();
+        final User user = simpleAuthPrincipalService.getSimpleAuthPrincipal().user();
         captchaUtil.checkTokenValid(changeUserDetails.getCaptchaText(), changeUserDetails.getCaptchaToken());
         final UserDo userDo = userRepository.getUserDo(user.getId());
         checkEnabled(userDo);
@@ -115,7 +114,7 @@ public class AuthService {
     }
 
     public User getUserDetail() {
-        return ((SimpleAuthPrincipal) securityIdentity.getPrincipal()).user();
+        return simpleAuthPrincipalService.getSimpleAuthPrincipal().user();
     }
 
     public void resetPassword(final ResetPassword resetPassword) {

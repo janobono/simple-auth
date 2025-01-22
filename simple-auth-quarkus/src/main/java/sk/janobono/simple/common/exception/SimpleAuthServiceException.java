@@ -5,6 +5,7 @@ import sk.janobono.simple.api.model.ErrorCode;
 
 public enum SimpleAuthServiceException {
 
+    UNAUTHORIZED,
     AUTHORITY_NOT_FOUND,
     INVALID_CAPTCHA,
     INVALID_CREDENTIALS,

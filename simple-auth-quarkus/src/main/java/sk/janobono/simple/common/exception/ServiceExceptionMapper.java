@@ -1,5 +1,6 @@
 package sk.janobono.simple.common.exception;
 
+import io.quarkus.logging.Log;
 import io.quarkus.security.AuthenticationFailedException;
 import io.quarkus.security.ForbiddenException;
 import io.quarkus.security.UnauthorizedException;
@@ -18,6 +19,7 @@ public class ServiceExceptionMapper implements ExceptionMapper<Throwable> {
 
     @Override
     public Response toResponse(final Throwable throwable) {
+        Log.warnf(throwable, "Exception occurred: %s", throwable.getClass().getSimpleName());
         return switch (throwable) {
             case final ApplicationException applicationException -> mapException(applicationException);
             case final WebApplicationException webApplicationException -> mapException(webApplicationException);

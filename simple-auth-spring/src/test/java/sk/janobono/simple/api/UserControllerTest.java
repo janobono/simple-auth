@@ -22,6 +22,7 @@ import sk.janobono.simple.api.model.User;
 import sk.janobono.simple.api.model.UserCreate;
 import sk.janobono.simple.api.model.UserProfile;
 import sk.janobono.simple.common.config.CommonConfigProperties;
+import sk.janobono.simple.dal.repository.UserRepository;
 
 class UserControllerTest extends BaseTest {
 
@@ -30,6 +31,9 @@ class UserControllerTest extends BaseTest {
 
     @Autowired
     public InitDataCommandLineRunner initDataCommandLineRunner;
+
+    @Autowired
+    public UserRepository userRepository;
 
     @Test
     public void allUserControllerMethods() {
