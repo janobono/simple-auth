@@ -30,197 +30,208 @@ import sk.janobono.simple.dal.repository.UserRepository;
 @QuarkusTest
 class AuthControllerTest {
 
-    public static final String EMAIL = "jimbo.pytlik@domain.com";
-    public static final String FIRST_NAME = "Jimbo";
-    public static final String LAST_NAME = "Pytlik";
-    public static final String PASSWORD = "simple";
-    public static final String NEW_PASSWORD = "newPass123";
+  public static final String EMAIL = "jimbo.pytlik@domain.com";
+  public static final String FIRST_NAME = "Jimbo";
+  public static final String LAST_NAME = "Pytlik";
+  public static final String PASSWORD = "simple";
+  public static final String NEW_PASSWORD = "newPass123";
 
-    @Inject
-    public CommonConfigProperties commonConfigProperties;
+  @Inject
+  public CommonConfigProperties commonConfigProperties;
 
-    @Inject
-    public CaptchaUtil captchaUtil;
+  @Inject
+  public CaptchaUtil captchaUtil;
 
-    @Inject
-    public UserRepository userRepository;
+  @Inject
+  public UserRepository userRepository;
 
-    @InjectMock
-    public MailService mailService;
-    protected TestMail testMail;
+  @InjectMock
+  public MailService mailService;
+  protected TestMail testMail;
 
-    @BeforeEach
-    public void setUp() {
-        testMail = new TestMail();
-        testMail.mock(mailService);
-    }
+  @Transactional
+  @BeforeEach
+  public void setUp() {
+    testMail = new TestMail();
+    testMail.mock(mailService);
 
-    @Test
-    @Transactional
-    void fullTest() {
-        userRepository.deleteAll();
+    userRepository.deleteAll();
+  }
 
-        final String token = signUp();
-        confirm(token);
+  @Test
+  void fullTest() {
+    final String token = signUp();
+    confirm(token);
 
-        AuthenticationResponse authenticationResponse = signIn(EMAIL, PASSWORD);
-        authenticationResponse = changeEmail(authenticationResponse);
-        authenticationResponse = changePassword(authenticationResponse);
-        changeUserDetails(authenticationResponse);
+    AuthenticationResponse authenticationResponse = signIn(EMAIL, PASSWORD);
+    authenticationResponse = changeEmail(authenticationResponse);
+    authenticationResponse = changePassword(authenticationResponse);
+    changeUserDetails(authenticationResponse);
 
-        final String[] data = resetPassword();
-        confirm(data[0]);
-        signIn(EMAIL, data[1]);
-    }
+    final String[] data = resetPassword();
+    confirm(data[0]);
+    signIn(EMAIL, data[1]);
+  }
 
-    private String signUp() {
-        final String captchaText = captchaUtil.generateText();
-        final String captchaToken = captchaUtil.generateToken(captchaText);
+  private String signUp() {
+    final String captchaText = captchaUtil.generateText();
+    final String captchaToken = captchaUtil.generateToken(captchaText);
 
-        given()
-            .contentType("application/json")
-            .body(SignUp.builder()
-                .email(EMAIL)
-                .password(PASSWORD)
-                .firstName(FIRST_NAME)
-                .lastName(LAST_NAME)
-                .captchaText(captchaText)
-                .captchaToken(captchaToken)
+    given()
+        .contentType("application/json")
+        .body(SignUp.builder()
+            .email(EMAIL)
+            .password(PASSWORD)
+            .firstName(FIRST_NAME)
+            .lastName(LAST_NAME)
+            .captchaText(captchaText)
+            .captchaToken(captchaToken)
+            .build())
+        .when()
+        .post("/auth/sign-up")
+        .then()
+        .statusCode(CREATED.getStatusCode());
+
+    final MailData mailData = testMail.getMail();
+    assertThat(mailData).isNotNull();
+    assertThat(mailData.content()).isNotNull();
+
+    final String regex = commonConfigProperties.webUrl() + "/confirm/";
+    return mailData.content().mailLink().href().replaceAll(regex, "");
+  }
+
+  private void confirm(final String token) {
+    given()
+        .contentType("application/json")
+        .body(Confirmation.builder()
+            .token(token)
+            .build())
+        .when()
+        .post("/auth/confirm")
+        .then()
+        .statusCode(OK.getStatusCode());
+  }
+
+  private AuthenticationResponse changeEmail(final AuthenticationResponse authenticationResponse) {
+    final String captchaText = captchaUtil.generateText();
+    final String captchaToken = captchaUtil.generateToken(captchaText);
+
+    given()
+        .header("Authorization", "Bearer " + authenticationResponse.getToken())
+        .contentType("application/json")
+        .body(ChangeEmail.builder().email("a" + EMAIL).password(PASSWORD).captchaText(captchaText)
+            .captchaToken(captchaToken).build())
+        .when()
+        .post("/auth/change-email")
+        .then()
+        .statusCode(OK.getStatusCode());
+
+    final Response response = given()
+        .contentType("application/json")
+        .header("Authorization",
+            "%s %s".formatted(authenticationResponse.getType(), authenticationResponse.getToken()))
+        .body(ChangeEmail.builder().email(EMAIL).password(PASSWORD).captchaText(captchaText)
+            .captchaToken(captchaToken).build())
+        .when()
+        .post("/auth/change-email")
+        .then()
+        .statusCode(OK.getStatusCode())
+        .extract().response();
+
+    return response.getBody().as(AuthenticationResponse.class);
+  }
+
+  private AuthenticationResponse changePassword(
+      final AuthenticationResponse authenticationResponse) {
+    final String captchaText = captchaUtil.generateText();
+    final String captchaToken = captchaUtil.generateToken(captchaText);
+
+    given()
+        .contentType("application/json")
+        .header("Authorization",
+            "%s %s".formatted(authenticationResponse.getType(), authenticationResponse.getToken()))
+        .body(
+            ChangePassword.builder().oldPassword(PASSWORD).newPassword(NEW_PASSWORD)
+                .captchaText(captchaText).captchaToken(captchaToken).build())
+        .when()
+        .post("/auth/change-password")
+        .then()
+        .statusCode(OK.getStatusCode());
+
+    final Response response = given()
+        .contentType("application/json")
+        .header("Authorization",
+            "%s %s".formatted(authenticationResponse.getType(), authenticationResponse.getToken()))
+        .body(
+            ChangePassword.builder().oldPassword(NEW_PASSWORD).newPassword(PASSWORD)
+                .captchaText(captchaText).captchaToken(captchaToken).build())
+        .when()
+        .post("/auth/change-password")
+        .then()
+        .statusCode(OK.getStatusCode())
+        .extract().response();
+
+    return response.getBody().as(AuthenticationResponse.class);
+  }
+
+  private void changeUserDetails(final AuthenticationResponse authenticationResponse) {
+    final String captchaText = captchaUtil.generateText();
+    final String captchaToken = captchaUtil.generateToken(captchaText);
+
+    final Response response = given()
+        .contentType("application/json")
+        .header("Authorization",
+            "%s %s".formatted(authenticationResponse.getType(), authenticationResponse.getToken()))
+        .body(ChangeUserDetails.builder()
+            .firstName(FIRST_NAME)
+            .lastName(LAST_NAME)
+            .captchaText(captchaText)
+            .captchaToken(captchaToken)
+            .build())
+        .when()
+        .post("/auth/change-user-details")
+        .then()
+        .statusCode(OK.getStatusCode())
+        .extract().response();
+
+    assertThat(response.getBody().as(AuthenticationResponse.class)).isNotNull();
+  }
+
+  private String[] resetPassword() {
+    final String captchaText = captchaUtil.generateText();
+    final String captchaToken = captchaUtil.generateToken(captchaText);
+
+    given()
+        .contentType("application/json")
+        .body(
+            ResetPassword.builder().email(EMAIL).captchaText(captchaText).captchaToken(captchaToken)
                 .build())
-            .when()
-            .post("/auth/sign-up")
-            .then()
-            .statusCode(CREATED.getStatusCode());
+        .when()
+        .post("/auth/reset-password")
+        .then()
+        .statusCode(OK.getStatusCode());
 
-        final MailData mailData = testMail.getMail();
-        assertThat(mailData).isNotNull();
-        assertThat(mailData.content()).isNotNull();
+    final MailData mailData = testMail.getMail();
+    assertThat(mailData).isNotNull();
+    assertThat(mailData.content()).isNotNull();
+    assertThat(mailData.content().mailLink()).isNotNull();
+    assertThat(mailData.content().mailLink().href()).isNotBlank();
+    final String regex = commonConfigProperties.webUrl() + "/confirm/";
+    final String token = mailData.content().mailLink().href().replaceAll(regex, "");
+    final String password = mailData.content().lines().getLast().replaceAll("password: ", "");
+    return new String[]{token, password};
+  }
 
-        final String regex = commonConfigProperties.webUrl() + "/confirm/";
-        return mailData.content().mailLink().href().replaceAll(regex, "");
-    }
+  private AuthenticationResponse signIn(final String email, final String password) {
+    final Response response = given()
+        .contentType("application/json")
+        .body(SignIn.builder().email(email).password(password).build())
+        .when()
+        .post("/auth/sign-in")
+        .then()
+        .statusCode(OK.getStatusCode())
+        .extract().response();
 
-    private void confirm(final String token) {
-        given()
-            .contentType("application/json")
-            .body(Confirmation.builder()
-                .token(token)
-                .build())
-            .when()
-            .post("/auth/confirm")
-            .then()
-            .statusCode(OK.getStatusCode());
-    }
-
-    private AuthenticationResponse changeEmail(final AuthenticationResponse authenticationResponse) {
-        final String captchaText = captchaUtil.generateText();
-        final String captchaToken = captchaUtil.generateToken(captchaText);
-
-        given()
-            .header("Authorization", "Bearer " + authenticationResponse.getToken())
-            .contentType("application/json")
-            .body(ChangeEmail.builder().email("a" + EMAIL).password(PASSWORD).captchaText(captchaText).captchaToken(captchaToken).build())
-            .when()
-            .post("/auth/change-email")
-            .then()
-            .statusCode(OK.getStatusCode());
-
-        final Response response = given()
-            .contentType("application/json")
-            .header("Authorization", "%s %s".formatted(authenticationResponse.getType(), authenticationResponse.getToken()))
-            .body(ChangeEmail.builder().email(EMAIL).password(PASSWORD).captchaText(captchaText).captchaToken(captchaToken).build())
-            .when()
-            .post("/auth/change-email")
-            .then()
-            .statusCode(OK.getStatusCode())
-            .extract().response();
-
-        return response.getBody().as(AuthenticationResponse.class);
-    }
-
-    private AuthenticationResponse changePassword(final AuthenticationResponse authenticationResponse) {
-        final String captchaText = captchaUtil.generateText();
-        final String captchaToken = captchaUtil.generateToken(captchaText);
-
-        given()
-            .contentType("application/json")
-            .header("Authorization", "%s %s".formatted(authenticationResponse.getType(), authenticationResponse.getToken()))
-            .body(
-                ChangePassword.builder().oldPassword(PASSWORD).newPassword(NEW_PASSWORD).captchaText(captchaText).captchaToken(captchaToken).build())
-            .when()
-            .post("/auth/change-password")
-            .then()
-            .statusCode(OK.getStatusCode());
-
-        final Response response = given()
-            .contentType("application/json")
-            .header("Authorization", "%s %s".formatted(authenticationResponse.getType(), authenticationResponse.getToken()))
-            .body(
-                ChangePassword.builder().oldPassword(NEW_PASSWORD).newPassword(PASSWORD).captchaText(captchaText).captchaToken(captchaToken).build())
-            .when()
-            .post("/auth/change-password")
-            .then()
-            .statusCode(OK.getStatusCode())
-            .extract().response();
-
-        return response.getBody().as(AuthenticationResponse.class);
-    }
-
-    private void changeUserDetails(final AuthenticationResponse authenticationResponse) {
-        final String captchaText = captchaUtil.generateText();
-        final String captchaToken = captchaUtil.generateToken(captchaText);
-
-        final Response response = given()
-            .contentType("application/json")
-            .header("Authorization", "%s %s".formatted(authenticationResponse.getType(), authenticationResponse.getToken()))
-            .body(ChangeUserDetails.builder()
-                .firstName(FIRST_NAME)
-                .lastName(LAST_NAME)
-                .captchaText(captchaText)
-                .captchaToken(captchaToken)
-                .build())
-            .when()
-            .post("/auth/change-user-details")
-            .then()
-            .statusCode(OK.getStatusCode())
-            .extract().response();
-
-        assertThat(response.getBody().as(AuthenticationResponse.class)).isNotNull();
-    }
-
-    private String[] resetPassword() {
-        final String captchaText = captchaUtil.generateText();
-        final String captchaToken = captchaUtil.generateToken(captchaText);
-
-        given()
-            .contentType("application/json")
-            .body(ResetPassword.builder().email(EMAIL).captchaText(captchaText).captchaToken(captchaToken).build())
-            .when()
-            .post("/auth/reset-password")
-            .then()
-            .statusCode(OK.getStatusCode());
-
-        final MailData mailData = testMail.getMail();
-        assertThat(mailData).isNotNull();
-        assertThat(mailData.content()).isNotNull();
-        assertThat(mailData.content().mailLink()).isNotNull();
-        assertThat(mailData.content().mailLink().href()).isNotBlank();
-        final String regex = commonConfigProperties.webUrl() + "/confirm/";
-        final String token = mailData.content().mailLink().href().replaceAll(regex, "");
-        final String password = mailData.content().lines().getLast().replaceAll("password: ", "");
-        return new String[]{token, password};
-    }
-
-    private AuthenticationResponse signIn(final String email, final String password) {
-        final Response response = given()
-            .contentType("application/json")
-            .body(SignIn.builder().email(email).password(password).build())
-            .when()
-            .post("/auth/sign-in")
-            .then()
-            .statusCode(OK.getStatusCode())
-            .extract().response();
-
-        return response.getBody().as(AuthenticationResponse.class);
-    }
+    return response.getBody().as(AuthenticationResponse.class);
+  }
 }

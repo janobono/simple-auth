@@ -20,8 +20,6 @@ quarkus:
   mailer:
     host: ${MAIL_HOST:localhost}
     port: ${MAIL_PORT:1025}
-  smallrye-jwt:
-    enabled: false
 
 # ===============================
 # = APP
@@ -51,12 +49,12 @@ app:
 
 "%dev":
   quarkus:
-    hibernate-orm:
-      database:
-        generation: drop-and-create
+    datasource:
+      devservices:
+        init-script-path: init.sql
 
 "%test":
   quarkus:
-    hibernate-orm:
-      database:
-        generation: drop-and-create
+    datasource:
+      devservices:
+        init-script-path: init.sql

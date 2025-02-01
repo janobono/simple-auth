@@ -1,85 +1,89 @@
 package sk.janobono.simple.common.component;
 
-import io.smallrye.jwt.auth.principal.DefaultJWTParser;
-import io.smallrye.jwt.auth.principal.JWTAuthContextInfo;
-import io.smallrye.jwt.auth.principal.JWTParser;
-import io.smallrye.jwt.auth.principal.ParseException;
-import io.smallrye.jwt.build.Jwt;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTCreator;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 import sk.janobono.simple.api.model.Authority;
 import sk.janobono.simple.common.config.JwtConfigProperties;
 
 @ApplicationScoped
 public class JwtToken {
 
-    private final PrivateKey privateKey;
-    private final JWTParser jwtParser;
-    private final Long expiration;
-    private final String issuer;
-    public JwtToken(final JwtConfigProperties jwtConfigProperties) {
-        final KeyPairGenerator keyGen;
-        try {
-            keyGen = KeyPairGenerator.getInstance("RSA");
-        } catch (final NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-        keyGen.initialize(2048);
-        final KeyPair keyPair = keyGen.generateKeyPair();
-        this.privateKey = keyPair.getPrivate();
-        this.expiration = TimeUnit.MINUTES.toMillis(jwtConfigProperties.expiration());
-        this.issuer = jwtConfigProperties.issuer();
+  private final Algorithm algorithm;
+  private final Long expiration;
+  private final String issuer;
 
-        final JWTAuthContextInfo authContextInfo = new JWTAuthContextInfo(keyPair.getPublic(), issuer);
-        this.jwtParser = new DefaultJWTParser(authContextInfo);
+  public JwtToken(final JwtConfigProperties jwtConfigProperties) {
+    final KeyPairGenerator keyGen;
+    try {
+      keyGen = KeyPairGenerator.getInstance("RSA");
+    } catch (final NoSuchAlgorithmException e) {
+      throw new RuntimeException(e);
     }
+    keyGen.initialize(2048);
+    final KeyPair keyPair = keyGen.generateKeyPair();
+    this.algorithm = Algorithm.RSA256((RSAPublicKey) keyPair.getPublic(),
+        (RSAPrivateKey) keyPair.getPrivate());
+    this.expiration = TimeUnit.MINUTES.toMillis(jwtConfigProperties.expiration());
+    this.issuer = jwtConfigProperties.issuer();
+  }
 
-    public String generateToken(final JwtContent jwtContent, final Long issuedAt) {
-        return Jwt.claims()
-            .issuer(issuer)
-            .issuedAt(issuedAt)
-            .expiresAt(expiresAt(issuedAt))
-            .subject(Long.toString(jwtContent.id()))
-            .audience(Optional.ofNullable(jwtContent.authorities()).stream()
-                .flatMap(Collection::stream)
-                .map(Authority::toString)
-                .collect(Collectors.toSet()))
-            .sign(privateKey);
+  public String generateToken(final JwtContent jwtContent, final Long issuedAt) {
+    try {
+      final JWTCreator.Builder jwtBuilder = JWT.create()
+          .withIssuer(issuer)
+          .withIssuedAt(new Date(issuedAt))
+          .withExpiresAt(new Date(expiresAt(issuedAt)));
+      jwtBuilder.withSubject(Long.toString(jwtContent.id()));
+      jwtBuilder.withAudience(
+          Optional.ofNullable(jwtContent.authorities()).stream()
+              .flatMap(Collection::stream)
+              .map(Authority::toString)
+              .toArray(String[]::new)
+      );
+      return jwtBuilder.sign(algorithm);
+    } catch (final Exception e) {
+      throw new RuntimeException(e);
     }
+  }
 
-    public JwtContent parseToken(final String token) {
-        final JsonWebToken jwt = decodeToken(token);
-        return new JwtContent(
-            Long.parseLong(jwt.getSubject()),
-            Optional.ofNullable(jwt.getAudience()).stream()
-                .flatMap(Collection::stream)
-                .map(Authority::fromValue)
-                .toList()
-        );
-    }
+  public JwtContent parseToken(final String token) {
+    final DecodedJWT jwt = decodeToken(token);
+    return new JwtContent(
+        Long.parseLong(jwt.getSubject()),
+        Optional.ofNullable(jwt.getAudience()).stream()
+            .flatMap(Collection::stream)
+            .map(Authority::fromValue)
+            .toList()
+    );
+  }
 
-    private Long expiresAt(final Long issuedAt) {
-        return Optional.ofNullable(issuedAt).map(l -> l + expiration).orElse(0L);
-    }
+  private Long expiresAt(final Long issuedAt) {
+    return Optional.ofNullable(issuedAt).map(l -> l + expiration).orElse(0L);
+  }
 
-    private JsonWebToken decodeToken(final String token) {
-        try {
-            return jwtParser.parse(token);
-        } catch (final ParseException e) {
-            throw new RuntimeException(e);
-        }
-    }
+  private DecodedJWT decodeToken(final String token) throws JWTVerificationException {
+    final JWTVerifier verifier = JWT.require(algorithm)
+        .withIssuer(issuer)
+        .build();
+    return verifier.verify(token);
+  }
 
-    public record JwtContent(Long id, List<Authority> authorities) {
+  public record JwtContent(Long id, List<Authority> authorities) {
 
-    }
+  }
 }
