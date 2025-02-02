@@ -12,14 +12,12 @@ quarkus:
     database:
       generation: validate
   http:
+    port: ${PORT:8080}
     root-path: ${CONTEXT_PATH:/api}
   log:
     category:
       "sk.janobono.simple":
         level: ${LOG_LEVEL:DEBUG}
-  mailer:
-    host: ${MAIL_HOST:localhost}
-    port: ${MAIL_PORT:1025}
 
 # ===============================
 # = APP

@@ -1,0 +1,42 @@
+include:
+  - infra.yaml
+services:
+  be:
+    image: simple-auth-quarkus:latest
+    restart: unless-stopped
+    environment:
+      - QUARKUS_MAILER_HOST=smtp
+      - QUARKUS_MAILER_PORT=1025
+      - QUARKUS_DATASOURCE_DB_KIND=postgresql
+      - QUARKUS_DATASOURCE_USERNAME=app
+      - QUARKUS_DATASOURCE_PASSWORD=app
+      - QUARKUS_DATASOURCE_JDBC_URL=jdbc:postgresql://db:5432/app
+      - WEB_URL=http://localhost
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.be.rule=PathPrefix(`/api`)
+      - traefik.http.routers.be.entrypoints=web
+      - traefik.http.services.be.loadbalancer.server.port=8080
+
+  fe:
+    image: simple-auth-react:latest
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.fe.rule=PathPrefix(`/`)
+      - traefik.http.routers.fe.entrypoints=web
+      - traefik.http.services.fe.loadbalancer.server.port=80
+
+  traefik:
+    image: public.ecr.aws/docker/library/traefik:v3.2
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--log.level=DEBUG"
+    ports:
+      - 80:80
+      - 8080:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
