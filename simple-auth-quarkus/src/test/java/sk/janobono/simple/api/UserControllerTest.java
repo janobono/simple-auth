@@ -93,7 +93,8 @@ class UserControllerTest {
         .header("Authorization", "Bearer " + authenticationResponse.getToken())
         .contentType("application/json")
         .when()
-        .get("/users/%d".formatted(id))
+        .pathParam("id", id)
+        .get("/users/{id}")
         .then()
         .statusCode(OK.getStatusCode())
         .extract().response();
@@ -104,28 +105,13 @@ class UserControllerTest {
   private PageUser getUsers(final AuthenticationResponse authenticationResponse,
       final String searchField,
       final String email) {
-    final StringBuilder path = new StringBuilder("/users");
-
-    if (searchField != null || email != null) {
-      path.append("?");
-    }
-
-    if (searchField != null) {
-      path.append("searchField=").append(searchField);
-    }
-
-    if (email != null) {
-      if (searchField != null) {
-        path.append("&");
-      }
-      path.append("email=").append(email);
-    }
-
     final Response response = given()
         .header("Authorization", "Bearer " + authenticationResponse.getToken())
         .contentType("application/json")
         .when()
-        .get(path.toString())
+        .queryParam("searchField", searchField)
+        .queryParam("email", email)
+        .get("/users")
         .then()
         .statusCode(OK.getStatusCode())
         .extract().response();
@@ -165,7 +151,8 @@ class UserControllerTest {
             .lastName(user.getLastName() + "changed")
             .build())
         .when()
-        .put("/users/%d".formatted(user.getId()))
+        .pathParam("id", user.getId())
+        .put("/users/{id}")
         .then()
         .statusCode(OK.getStatusCode())
         .extract().response();
@@ -183,7 +170,8 @@ class UserControllerTest {
             "%s %s".formatted(authenticationResponse.getType(), authenticationResponse.getToken()))
         .body(List.of(Authority.CUSTOMER, Authority.EMPLOYEE))
         .when()
-        .patch("/users/%d/authorities".formatted(id))
+        .pathParam("id", id)
+        .patch("/users/{id}/authorities")
         .then()
         .statusCode(OK.getStatusCode())
         .extract().response();
@@ -200,7 +188,8 @@ class UserControllerTest {
             "%s %s".formatted(authenticationResponse.getType(), authenticationResponse.getToken()))
         .body(BooleanValue.builder().value(true).build())
         .when()
-        .patch("/users/%d/confirm".formatted(id))
+        .pathParam("id", id)
+        .patch("/users/{id}/confirm")
         .then()
         .statusCode(OK.getStatusCode())
         .extract().response();
@@ -217,7 +206,8 @@ class UserControllerTest {
             "%s %s".formatted(authenticationResponse.getType(), authenticationResponse.getToken()))
         .body(BooleanValue.builder().value(true).build())
         .when()
-        .patch("/users/%d/enable".formatted(id))
+        .pathParam("id", id)
+        .patch("/users/{id}/enable")
         .then()
         .statusCode(OK.getStatusCode())
         .extract().response();
@@ -234,7 +224,8 @@ class UserControllerTest {
             "%s %s".formatted(authenticationResponse.getType(), authenticationResponse.getToken()))
         .body(BooleanValue.builder().value(true).build())
         .when()
-        .delete("/users/%d".formatted(id))
+        .pathParam("id", id)
+        .delete("/users/{id}")
         .then()
         .statusCode(OK.getStatusCode());
   }
