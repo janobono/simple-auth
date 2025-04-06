@@ -1,0 +1,745 @@
+openapi: 3.0.1
+info:
+  title: Simple Auth Api
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api
+    description: Generated server url
+security:
+  - bearerAuth: []
+paths:
+  /auth/change-email:
+    post:
+      tags:
+        - auth-controller
+      operationId: changeEmail
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangeEmail'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationResponse'
+        4XX:
+          $ref: '#/components/responses/client-error'
+        5XX:
+          $ref: '#/components/responses/server-error'
+  /auth/change-password:
+    post:
+      tags:
+        - auth-controller
+      operationId: changePassword
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePassword'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationResponse'
+        4XX:
+          $ref: '#/components/responses/client-error'
+        5XX:
+          $ref: '#/components/responses/server-error'
+  /auth/change-user-details:
+    post:
+      tags:
+        - auth-controller
+      operationId: changeUserDetails
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangeUserDetails'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationResponse'
+        4XX:
+          $ref: '#/components/responses/client-error'
+        5XX:
+          $ref: '#/components/responses/server-error'
+  /auth/confirm:
+    post:
+      tags:
+        - auth-controller
+      operationId: confirm
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Confirmation'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationResponse'
+        4XX:
+          $ref: '#/components/responses/client-error'
+        5XX:
+          $ref: '#/components/responses/server-error'
+  /auth/reset-password:
+    post:
+      tags:
+        - auth-controller
+      operationId: resetPassword
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPassword'
+        required: true
+      responses:
+        '200':
+          description: OK
+        4XX:
+          $ref: '#/components/responses/client-error'
+        5XX:
+          $ref: '#/components/responses/server-error'
+  /auth/sign-in:
+    post:
+      tags:
+        - auth-controller
+      operationId: signIn
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignIn'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationResponse'
+        4XX:
+          $ref: '#/components/responses/client-error'
+        5XX:
+          $ref: '#/components/responses/server-error'
+  /auth/sign-up:
+    post:
+      tags:
+        - auth-controller
+      operationId: signUp
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignUp'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthenticationResponse'
+        4XX:
+          $ref: '#/components/responses/client-error'
+        5XX:
+          $ref: '#/components/responses/server-error'
+  /auth/user-detail:
+    get:
+      tags:
+        - auth-controller
+      operationId: getUserDetail
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        4XX:
+          $ref: '#/components/responses/client-error'
+        5XX:
+          $ref: '#/components/responses/server-error'
+  /captcha:
+    get:
+      tags:
+        - captcha-controller
+      operationId: getCaptcha
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Captcha'
+        4XX:
+          $ref: '#/components/responses/client-error'
+        5XX:
+          $ref: '#/components/responses/server-error'
+  /livez:
+    get:
+      tags:
+        - health-controller
+      operationId: livez
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+        4XX:
+          $ref: '#/components/responses/client-error'
+        5XX:
+          $ref: '#/components/responses/server-error'
+  /readyz:
+    get:
+      tags:
+        - health-controller
+      operationId: readyz
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+        4XX:
+          $ref: '#/components/responses/client-error'
+        5XX:
+          $ref: '#/components/responses/server-error'
+  /users:
+    get:
+      tags:
+        - user-controller
+      operationId: getUsers
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: sort
+          in: query
+          required: false
+          schema:
+            type: string
+            default: email ASC
+        - name: searchField
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: email
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageUser'
+        4XX:
+          $ref: '#/components/responses/client-error'
+        5XX:
+          $ref: '#/components/responses/server-error'
+    post:
+      tags:
+        - user-controller
+      operationId: addUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreate'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        4XX:
+          $ref: '#/components/responses/client-error'
+        5XX:
+          $ref: '#/components/responses/server-error'
+  /users/{id}:
+    get:
+      tags:
+        - user-controller
+      operationId: getUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        4XX:
+          $ref: '#/components/responses/client-error'
+        5XX:
+          $ref: '#/components/responses/server-error'
+    put:
+      tags:
+        - user-controller
+      operationId: setUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfile'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        4XX:
+          $ref: '#/components/responses/client-error'
+        5XX:
+          $ref: '#/components/responses/server-error'
+    delete:
+      tags:
+        - user-controller
+      operationId: deleteUser
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+        4XX:
+          $ref: '#/components/responses/client-error'
+        5XX:
+          $ref: '#/components/responses/server-error'
+  /users/{id}/authorities:
+    patch:
+      tags:
+        - user-controller
+      operationId: setAuthorities
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Authority'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        4XX:
+          $ref: '#/components/responses/client-error'
+        5XX:
+          $ref: '#/components/responses/server-error'
+  /users/{id}/confirm:
+    patch:
+      tags:
+        - user-controller
+      operationId: setConfirmed
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BooleanValue'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        4XX:
+          $ref: '#/components/responses/client-error'
+        5XX:
+          $ref: '#/components/responses/server-error'
+  /users/{id}/enable:
+    patch:
+      tags:
+        - user-controller
+      operationId: setEnabled
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BooleanValue'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        4XX:
+          $ref: '#/components/responses/client-error'
+        5XX:
+          $ref: '#/components/responses/server-error'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ChangeEmail:
+      required:
+        - email
+        - password
+        - captchaText
+        - captchaToken
+      type: object
+      properties:
+        email:
+          maxLength: 255
+          minLength: 0
+          type: string
+          format: email
+        password:
+          maxLength: 255
+          minLength: 0
+          type: string
+        captchaText:
+          type: string
+        captchaToken:
+          type: string
+    AuthenticationResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        type:
+          type: string
+    ErrorCode:
+      type: string
+      enum:
+        - UNKNOWN
+        - NOT_FOUND
+        - UNAUTHORIZED
+        - FORBIDDEN
+        - AUTHORITY_NOT_FOUND
+        - INVALID_CAPTCHA
+        - INVALID_CREDENTIALS
+        - UNSUPPORTED_VALIDATION_TOKEN
+        - USER_EMAIL_IS_USED
+        - USER_NOT_CONFIRMED
+        - USER_IS_DISABLED
+        - USER_NOT_FOUND
+    ErrorMessage:
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/ErrorCode'
+        message:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+    ChangePassword:
+      required:
+        - oldPassword
+        - newPassword
+        - captchaText
+        - captchaToken
+      type: object
+      properties:
+        oldPassword:
+          maxLength: 255
+          minLength: 0
+          type: string
+        newPassword:
+          maxLength: 255
+          minLength: 0
+          type: string
+        captchaText:
+          type: string
+        captchaToken:
+          type: string
+    ChangeUserDetails:
+      required:
+        - firstName
+        - lastName
+        - captchaText
+        - captchaToken
+      type: object
+      properties:
+        firstName:
+          maxLength: 255
+          minLength: 0
+          type: string
+        lastName:
+          maxLength: 255
+          minLength: 0
+          type: string
+        captchaText:
+          type: string
+        captchaToken:
+          type: string
+    Confirmation:
+      required:
+        - token
+      type: object
+      properties:
+        token:
+          type: string
+    ResetPassword:
+      required:
+        - email
+        - captchaText
+        - captchaToken
+      type: object
+      properties:
+        email:
+          maxLength: 255
+          minLength: 0
+          type: string
+          format: email
+        captchaText:
+          type: string
+        captchaToken:
+          type: string
+    SignIn:
+      required:
+        - email
+        - password
+      type: object
+      properties:
+        email:
+          maxLength: 255
+          minLength: 0
+          type: string
+          format: email
+        password:
+          maxLength: 255
+          minLength: 0
+          type: string
+    SignUp:
+      required:
+        - email
+        - password
+        - firstName
+        - lastName
+        - captchaText
+        - captchaToken
+      type: object
+      properties:
+        email:
+          maxLength: 255
+          minLength: 0
+          type: string
+          format: email
+        password:
+          maxLength: 255
+          minLength: 0
+          type: string
+        firstName:
+          maxLength: 255
+          minLength: 0
+          type: string
+        lastName:
+          maxLength: 255
+          minLength: 0
+          type: string
+        captchaText:
+          type: string
+        captchaToken:
+          type: string
+    Authority:
+      type: string
+      enum:
+        - admin
+        - manager
+        - employee
+        - customer
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        email:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        confirmed:
+          type: boolean
+        enabled:
+          type: boolean
+        authorities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Authority'
+    Captcha:
+      type: object
+      properties:
+        captchaToken:
+          type: string
+        captchaImage:
+          type: string
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+    PageUser:
+      type: object
+      properties:
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        first:
+          type: boolean
+        last:
+          type: boolean
+        page:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        empty:
+          type: boolean
+    UserCreate:
+      required:
+        - email
+        - firstName
+        - lastName
+        - confirmed
+        - enabled
+      type: object
+      properties:
+        email:
+          maxLength: 255
+          minLength: 0
+          type: string
+          format: email
+        firstName:
+          maxLength: 255
+          minLength: 0
+          type: string
+        lastName:
+          maxLength: 255
+          minLength: 0
+          type: string
+        confirmed:
+          type: boolean
+        enabled:
+          type: boolean
+        authorities:
+          type: array
+          items:
+            $ref: '#/components/schemas/Authority'
+    UserProfile:
+      required:
+        - firstName
+        - lastName
+      type: object
+      properties:
+        firstName:
+          maxLength: 255
+          minLength: 0
+          type: string
+        lastName:
+          maxLength: 255
+          minLength: 0
+          type: string
+    BooleanValue:
+      required:
+        - value
+      type: object
+      properties:
+        value:
+          type: boolean
+  responses:
+    client-error:
+      description: Client error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+    server-error:
+      description: Server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'

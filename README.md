@@ -105,6 +105,20 @@ docker-compose.yaml file. All the prepared applications share the same endpoints
 
 **infra.yaml** - base infrastructure services reused by other docker compose yaml files.
 
+### quarkus
+
+start:
+
+```shell
+docker compose -f docker-compose-quarkus.yaml up
+```
+
+stop:
+
+```shell
+docker compose -f docker-compose-quarkus.yaml down
+```
+
 ### spring
 
 start:
