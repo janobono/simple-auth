@@ -3,8 +3,13 @@ default: build
 clean:
 	@echo "  >  Cleaning build cache"
 	@-rm -rf bin && go clean ./...
+	@-rm internal/repository/*.go
 
-build:
+generate:
+	@echo "  >  Generate source files"
+	@sqlc generate
+
+build: generate
 	@echo "  >  Building binary"
 	@go build -o bin/simple-auth cmd/main.go
 
