@@ -1,0 +1,14 @@
+include:
+  - infra.yaml
+services:
+  simple-auth-service:
+    image: simple-auth-service:latest
+    ports:
+      - "50052:50052"
+      - "8080:8080"
+    restart: unless-stopped
+    env_file: "simple-auth-service.env"
+    depends_on:
+      - pg
+      - smtp
+      - captcha-service

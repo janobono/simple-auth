@@ -1,0 +1,73 @@
+UserAttributesData:
+  type: object
+  required:
+    - attributes
+  properties:
+    attributes:
+      items:
+        $ref: './attribute-value.yaml#/AttributeValueData'
+      type: array
+UserAuthoritiesData:
+  type: object
+  required:
+    - authorities
+  properties:
+    authorities:
+      items:
+        type: string
+      type: array
+UserEmailData:
+  type: object
+  required:
+    - email
+  properties:
+    email:
+      type: string
+      format: email
+UserData:
+  type: object
+  required:
+    - email
+    - confirmed
+    - enabled
+  properties:
+    email:
+      type: string
+      format: email
+    confirmed:
+      type: boolean
+    enabled:
+      type: boolean
+UserDetail:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+    email:
+      type: string
+      format: email
+    createdAt:
+      type: string
+      format: date-time
+    confirmed:
+      type: boolean
+    enabled:
+      type: boolean
+    attributes:
+      items:
+        $ref: './attribute-value.yaml#/AttributeValueDetail'
+      type: array
+    authorities:
+      items:
+        $ref: './authority.yaml#/AuthorityDetail'
+      type: array
+UserPage:
+  allOf:
+    - $ref: './page.yaml#/Page'
+    - type: object
+      properties:
+        content:
+          items:
+            $ref: '#/UserDetail'
+          type: array

@@ -1,0 +1,9 @@
+/bin
+/generated
+.git
+.env
+.gitignore
+build.sh
+Dockerfile
+openapitools.json
+README.md
