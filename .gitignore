@@ -1,3 +1,27 @@
-# Editor/IDE
-# .idea/
-# .vscode/
+# IDEs and editors
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IntelliJ project files
+*.iml
+*.iws
+*.ipr
+.idea/
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# System files
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
