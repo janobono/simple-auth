@@ -1,0 +1,13 @@
+include:
+  - infra.yaml
+services:
+  simple-auth:
+    image: simple-auth:latest
+    ports:
+      - "50052:50052"
+      - "8080:8080"
+    restart: unless-stopped
+    env_file: "simple-auth.env"
+    depends_on:
+      - pg
+      - smtp

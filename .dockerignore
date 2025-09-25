@@ -1,0 +1,12 @@
+/bin
+/generated
+/open-api/spec
+/open-api/bundle.sh
+/open-api/README.md
+.git
+.env
+.gitignore
+build.sh
+Dockerfile
+openapitools.json
+README.md
