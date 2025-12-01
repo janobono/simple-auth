@@ -19,9 +19,9 @@ get:
       schema:
         default: email ASC
         type: string
-    - required: false
+    - name: searchField
       in: query
-      name: searchField
+      required: false
       schema:
         type: string
     - name: email
