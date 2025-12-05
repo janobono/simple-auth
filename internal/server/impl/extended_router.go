@@ -22,15 +22,15 @@ func NewRouter(routerContext RouterContext) *gin.Engine {
 
 	authMiddleware := security.NewHttpTokenMiddleware[*openapi.UserDetail](security.HttpSecurityConfig{
 		PublicEndpoints: map[string]struct{}{
-			fmt.Sprintf("ANY:%s/captcha", routerContext.ContextPath):               {},
-			fmt.Sprintf("POST:%s/confirm", routerContext.ContextPath):              {},
-			fmt.Sprintf("POST:%s/resend-confirmation", routerContext.ContextPath):  {},
-			fmt.Sprintf("POST:%s/reset-password", routerContext.ContextPath):       {},
-			fmt.Sprintf("POST:%s/sign-in", routerContext.ContextPath):              {},
-			fmt.Sprintf("POST:%s/sign-up", routerContext.ContextPath):              {},
-			fmt.Sprintf("GET:%s/livez", routerContext.ContextPath):                 {},
-			fmt.Sprintf("GET:%s/readyz", routerContext.ContextPath):                {},
-			fmt.Sprintf("GET:%s/.well-known/jwks.json", routerContext.ContextPath): {},
+			fmt.Sprintf("ANY:%s/captcha", routerContext.ContextPath):                   {},
+			fmt.Sprintf("POST:%s/auth/confirm", routerContext.ContextPath):             {},
+			fmt.Sprintf("POST:%s/auth/resend-confirmation", routerContext.ContextPath): {},
+			fmt.Sprintf("POST:%s/auth/reset-password", routerContext.ContextPath):      {},
+			fmt.Sprintf("POST:%s/auth/sign-in", routerContext.ContextPath):             {},
+			fmt.Sprintf("POST:%s/auth/sign-up", routerContext.ContextPath):             {},
+			fmt.Sprintf("GET:%s/livez", routerContext.ContextPath):                     {},
+			fmt.Sprintf("GET:%s/readyz", routerContext.ContextPath):                    {},
+			fmt.Sprintf("GET:%s/.well-known/jwks.json", routerContext.ContextPath):     {},
 		},
 		Authorities: map[string][]string{
 			"GET:/attributes":     append(routerContext.ReadAuthorities, routerContext.WriteAuthorities...),

@@ -118,6 +118,18 @@ func TestE2E(t *testing.T) {
 		require.Equal(t, true, booleanValue.Value)
 	})
 
+	t.Run("04_Sign in test", func(t *testing.T) {
+		req, errMessage, err := signIn(&openapi.SignIn{
+			Email:    "simple@auth.org",
+			Password: "simple",
+		})
+		require.NoError(t, err)
+		require.Nil(t, errMessage)
+		require.NotNil(t, req)
+		require.NotEmpty(t, req.AccessToken)
+		require.NotEmpty(t, req.RefreshToken)
+	})
+
 }
 
 func signIn(data *openapi.SignIn) (*openapi.AuthenticationResponse, *openapi.ErrorMessage, error) {
